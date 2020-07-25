@@ -1,6 +1,8 @@
 ﻿namespace Maxstupo.DynWallpaper.Forms.Wallpapers {
 
+    using System;
     using System.Windows.Forms;
+    using HeyRed.Mime;
 
     public sealed class WallpaperImage : WallpaperBase {
         private readonly PictureBox pb;
@@ -15,10 +17,15 @@
             Controls.Add(pb);
         }
 
-        public override void ApplyWallpaper(string filepath) {
-            base.ApplyWallpaper(filepath);
+        public override bool ApplyWallpaper(string filepath) {
+            if (!MimeTypesMap.GetMimeType(filepath).StartsWith("image", StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
             pb.ImageLocation = filepath;
+
+            return true;
         }
+
 
     }
 

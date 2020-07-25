@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Windows.Forms;
+    using HeyRed.Mime;
+    using LibVLCSharp.Shared;
     using Maxstupo.DynWallpaper.Forms.Wallpapers;
     using Maxstupo.DynWallpaper.Utility;
     using Microsoft.Win32;
@@ -14,6 +16,9 @@
         private readonly Dictionary<Screen, WallpaperBase> wallpapers = new Dictionary<Screen, WallpaperBase>();
 
         public FormMain() {
+            if (!DesignMode)
+                Core.Initialize();
+
             InitializeComponent();
 
             if (!WallpaperSystem.Init()) {
@@ -31,6 +36,9 @@
 
         private void Application_ApplicationExit(object sender, EventArgs e) {
             SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+
+            foreach (WallpaperBase wallpaper in wallpapers.Values)
+                wallpaper.Close();
 
             WallpaperSystem.ResetDesktopBackground();
         }
@@ -72,21 +80,33 @@
             if (screen == null)
                 return;
 
+            string mimeType = MimeTypesMap.GetMimeType(txtFilepath.Text);
+
             if (!wallpapers.TryGetValue(screen, out WallpaperBase wallpaper)) {
-                wallpaper = new WallpaperImage();
+
+                wallpaper = CreateWallpaper(screen, mimeType);
 
                 wallpapers.Add(screen, wallpaper);
-
-                wallpaper.Show();
-                wallpaper.Bounds = WallpaperSystem.GetScreenBounds(screen, SystemInformation.VirtualScreen);
-
-                WallpaperSystem.SetParent(wallpaper);
-
-                cbxDisplay_SelectionChangeCommitted(sender, e);
             }
 
-            wallpaper.ApplyWallpaper(txtFilepath.Text);
+            if (!wallpaper.ApplyWallpaper(txtFilepath.Text)) {
 
+                // The current wallpaper doesn't support the specified file.
+
+                WallpaperBase newWallpaper = CreateWallpaper(screen, mimeType);
+
+                if (newWallpaper == null) {
+                    MessageBox.Show(this, "The specified file format is unsupported by DynWallpaper!", "DynWallpaper", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                } else { // A wallpaper is supported for this file, so switch to it.
+                    wallpaper.Close();
+                    wallpapers[screen] = newWallpaper;
+                    newWallpaper.ApplyWallpaper(txtFilepath.Text);
+                }
+
+            }
+
+            cbxDisplay_SelectionChangeCommitted(sender, e);
         }
 
         private void btnRemove_Click(object sender, EventArgs e) {
@@ -104,6 +124,27 @@
 
                 cbxDisplay_SelectionChangeCommitted(sender, e);
             }
+        }
+
+        private WallpaperBase CreateWallpaper(Screen screen, string mimeType) {
+            WallpaperBase wallpaper;
+
+            if (mimeType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase)) {
+                wallpaper = new WallpaperImage();
+
+            } else if (mimeType.StartsWith("video", StringComparison.InvariantCultureIgnoreCase)) {
+                wallpaper = new WallpaperVideo();
+
+            } else {
+                return null;
+            }
+
+            wallpaper.Show();
+            wallpaper.Bounds = WallpaperSystem.GetScreenBounds(screen, SystemInformation.VirtualScreen);
+
+            WallpaperSystem.SetParent(wallpaper);
+
+            return wallpaper;
         }
 
         private void cbxDisplay_SelectionChangeCommitted(object sender, EventArgs e) {

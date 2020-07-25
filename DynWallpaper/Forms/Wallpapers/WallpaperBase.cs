@@ -4,7 +4,7 @@
     using System.Windows.Forms;
 
     public abstract class WallpaperBase : Form {
-    
+
         public WallpaperBase() {
             InitializeComponent();
         }
@@ -22,8 +22,8 @@
             Text = "Wallpaper";
         }
 
-        public virtual void ApplyWallpaper(string filepath) { }
-    
+        public abstract bool ApplyWallpaper(string filepath);
+
     }
-    
+
 }

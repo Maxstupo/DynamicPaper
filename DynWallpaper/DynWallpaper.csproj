@@ -62,6 +62,9 @@
     <Compile Include="Forms\Wallpapers\WallpaperBase.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\Wallpapers\WallpaperVideo.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\Wallpapers\WallpaperImage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,6 +106,9 @@
   <ItemGroup>
     <PackageReference Include="LibVLCSharp.WinForms">
       <Version>3.4.6</Version>
+    </PackageReference>
+    <PackageReference Include="MimeTypesMap">
+      <Version>1.0.8</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
