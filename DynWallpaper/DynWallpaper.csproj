@@ -12,6 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,8 +59,17 @@
     <Compile Include="Forms\FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Wallpapers\WallpaperBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Wallpapers\WallpaperImage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\WallpaperSystem.cs" />
+    <Compile Include="Utility\Windows\NativeMethods.cs" />
+    <Compile Include="Utility\Windows\SendMessageTimeoutFlags.cs" />
+    <Compile Include="Utility\Windows\SPI.cs" />
+    <Compile Include="Utility\Windows\SPIF.cs" />
     <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -87,9 +97,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utility\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="DynWallpaper.ico" />
   </ItemGroup>
