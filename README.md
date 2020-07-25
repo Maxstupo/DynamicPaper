@@ -1,5 +1,5 @@
 # DynWallpaper
-TBD
+DynWallpaper provides support for desktop wallpapers that aren't just images. Currently video & image wallpapers are supported, with the ability to have separate wallpapers for each display.
 
 ## Releases
 TBD
@@ -8,6 +8,8 @@ TBD
 TBD
 
 ## Installation & Setup
+Requires Windows 8 or above.
+
 TBD
 
 #### Prerequisites
