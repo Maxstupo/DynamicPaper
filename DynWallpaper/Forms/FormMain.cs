@@ -9,7 +9,7 @@
 
     public partial class FormMain : Form {
 
-        public Screen SelectedScreen => cbxDisplay.SelectedItem as Screen;
+        public Screen SelectedScreen => (cbxDisplay.SelectedItem as ScreenInfo)?.Screen;
 
         private readonly Dictionary<Screen, WallpaperBase> wallpapers = new Dictionary<Screen, WallpaperBase>();
 
@@ -40,10 +40,12 @@
         }
 
         private void RefreshDisplayList() {
-            cbxDisplay.DataSource = null;
-            cbxDisplay.DataSource = Screen.AllScreens;
+            cbxDisplay.Items.Clear();
+            cbxDisplay.DisplayMember = nameof(ScreenInfo.DisplayName);
 
-            cbxDisplay.DisplayMember = nameof(Screen.DeviceName);
+            Screen[] screens = Screen.AllScreens;
+            for (int i = 0; i < screens.Length; i++)
+                cbxDisplay.Items.Add(new ScreenInfo(screens[i], i));
 
             cbxDisplay.SelectedIndex = 0;
         }

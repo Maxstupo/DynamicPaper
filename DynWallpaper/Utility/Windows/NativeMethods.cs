@@ -70,6 +70,18 @@
         public static extern Int32 SystemParametersInfo(SPI uiAction, UInt32 uiParam, String pvParam, SPIF fWinIni);
 
 
+        [DllImport("user32.dll")]
+        public static extern int GetDisplayConfigBufferSizes(QUERY_DEVICE_CONFIG_FLAGS flags, out uint numPathArrayElements, out uint numModeInfoArrayElements);
+
+
+        [DllImport("user32.dll")]
+        public static extern int QueryDisplayConfig(QUERY_DEVICE_CONFIG_FLAGS flags, ref uint numPathArrayElements, [Out] DISPLAYCONFIG_PATH_INFO[] PathInfoArray, ref uint numModeInfoArrayElements, [Out] DISPLAYCONFIG_MODE_INFO[] ModeInfoArray, IntPtr currentTopologyId);
+
+
+        [DllImport("user32.dll")]
+        public static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName);
+
+
     }
 
 }
