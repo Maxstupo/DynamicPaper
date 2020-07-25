@@ -1,0 +1,14 @@
+*.cs linguist-language=CSharp
+
+#################################################################################
+# Set default behavior to automatically normalize line endings.
+#################################################################################
+* text=auto
+
+
+#################################################################################
+# Force bash scripts to always use lf line endings so if the repo is accessed
+# in Unix via a file share from Windows, the scripts will work.
+#################################################################################
+*.sh text eol=lf
+
