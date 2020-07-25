@@ -1,6 +1,7 @@
 ﻿namespace Maxstupo.DynWallpaper.Utility {
 
     using System;
+    using System.Drawing;
     using System.Windows.Forms;
     using Maxstupo.DynWallpaper.Utility.Windows;
     using Microsoft.Win32;
@@ -56,6 +57,21 @@
             string path = Convert.ToString(rkDesktop.GetValue("Wallpaper"));
 
             NativeMethods.SystemParametersInfo(SPI.SETDESKWALLPAPER, 0, path, SPIF.SENDCHANGE);
+        }
+
+        /// <summary>
+        /// Returns the screen bounds for the given screen, using virtual screen coordinates
+        /// </summary>
+        /// <see cref="SystemInformation.VirtualScreen"/>
+        public static Rectangle GetScreenBounds(Screen screen, Rectangle virtualBounds) {
+            Rectangle bounds = screen.Bounds;
+
+            return new Rectangle(
+                bounds.Left - virtualBounds.Left,
+                bounds.Top - virtualBounds.Top,
+                Math.Abs(bounds.Width),
+                Math.Abs(bounds.Height)
+            );
         }
 
     }

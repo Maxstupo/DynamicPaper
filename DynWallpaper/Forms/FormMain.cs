@@ -1,20 +1,53 @@
 ﻿namespace Maxstupo.DynWallpaper.Forms {
 
     using System;
-    using System.Drawing;
+    using System.Collections.Generic;
     using System.Windows.Forms;
     using Maxstupo.DynWallpaper.Forms.Wallpapers;
     using Maxstupo.DynWallpaper.Utility;
+    using Microsoft.Win32;
 
     public partial class FormMain : Form {
 
-        private WallpaperBase wallpaper;
+        public Screen SelectedScreen => cbxDisplay.SelectedItem as Screen;
+
+        private readonly Dictionary<Screen, WallpaperBase> wallpapers = new Dictionary<Screen, WallpaperBase>();
 
         public FormMain() {
             InitializeComponent();
 
-            WallpaperSystem.Init();
+            if (!WallpaperSystem.Init()) {
+                MessageBox.Show(this, "Failed to initialize wallpaper system!", "DynWallpaper", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
         }
+
+        private void FormMain_Load(object sender, EventArgs e) {
+            Application.ApplicationExit += Application_ApplicationExit;
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
+            RefreshDisplayList();
+        }
+
+        private void Application_ApplicationExit(object sender, EventArgs e) {
+            SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+
+            WallpaperSystem.ResetDesktopBackground();
+        }
+
+        private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e) {
+            RefreshDisplayList();
+        }
+
+        private void RefreshDisplayList() {
+            cbxDisplay.DataSource = null;
+            cbxDisplay.DataSource = Screen.AllScreens;
+
+            cbxDisplay.DisplayMember = nameof(Screen.DeviceName);
+
+            cbxDisplay.SelectedIndex = 0;
+        }
+
 
         private void btnBrowse_Click(object sender, EventArgs e) {
             using (OpenFileDialog dialog = new OpenFileDialog()) {
@@ -32,28 +65,54 @@
 
 
         private void btnSet_Click(object sender, EventArgs e) {
-            if (wallpaper != null) {
-                wallpaper.ApplyWallpaper(txtFilepath.Text);
+            Screen screen = SelectedScreen;
+
+            if (screen == null)
                 return;
+
+            if (!wallpapers.TryGetValue(screen, out WallpaperBase wallpaper)) {
+                wallpaper = new WallpaperImage();
+
+                wallpapers.Add(screen, wallpaper);
+
+                wallpaper.Show();
+                wallpaper.Bounds = WallpaperSystem.GetScreenBounds(screen, SystemInformation.VirtualScreen);
+
+                WallpaperSystem.SetParent(wallpaper);
+
+                cbxDisplay_SelectionChangeCommitted(sender, e);
             }
-
-            wallpaper = new WallpaperImage();
-            wallpaper.Show();
-
-            wallpaper.Bounds = new Rectangle(0, 0, 800, 600);
 
             wallpaper.ApplyWallpaper(txtFilepath.Text);
 
-            WallpaperSystem.SetParent(wallpaper);
         }
 
         private void btnRemove_Click(object sender, EventArgs e) {
-            wallpaper.Close();
-            wallpaper.Dispose();
-            wallpaper = null;
+            Screen screen = SelectedScreen;
 
-            WallpaperSystem.ResetDesktopBackground();
+            if (screen == null)
+                return;
+
+            if (wallpapers.TryGetValue(screen, out WallpaperBase wallpaper)) {
+                wallpapers.Remove(screen);
+
+                wallpaper.Close();
+
+                WallpaperSystem.ResetDesktopBackground();
+
+                cbxDisplay_SelectionChangeCommitted(sender, e);
+            }
         }
+
+        private void cbxDisplay_SelectionChangeCommitted(object sender, EventArgs e) {
+            Screen screen = SelectedScreen;
+
+            if (screen == null)
+                return;
+
+            btnRemove.Enabled = wallpapers.ContainsKey(screen);
+        }
+
 
     }
 

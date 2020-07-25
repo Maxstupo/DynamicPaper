@@ -12,6 +12,9 @@
         protected override void Dispose(bool disposing) {
             if (disposing && (components != null)) {
                 components.Dispose();
+
+                foreach (Maxstupo.DynWallpaper.Forms.Wallpapers.WallpaperBase wallpaper in wallpapers.Values)
+                    wallpaper.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -29,11 +32,14 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.txtFilepath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.cbxDisplay = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnRemove
             // 
-            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemove.Enabled = false;
             this.btnRemove.Location = new System.Drawing.Point(627, 83);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(75, 23);
@@ -44,7 +50,7 @@
             // 
             // btnSet
             // 
-            this.btnSet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSet.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSet.Location = new System.Drawing.Point(546, 83);
             this.btnSet.Name = "btnSet";
             this.btnSet.Size = new System.Drawing.Size(75, 23);
@@ -55,7 +61,7 @@
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowse.Location = new System.Drawing.Point(627, 13);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(75, 23);
@@ -66,7 +72,7 @@
             // 
             // txtFilepath
             // 
-            this.txtFilepath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtFilepath.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilepath.Location = new System.Drawing.Point(70, 14);
             this.txtFilepath.Name = "txtFilepath";
@@ -83,22 +89,44 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "Filepath:";
             // 
+            // cbxDisplay
+            // 
+            this.cbxDisplay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxDisplay.FormattingEnabled = true;
+            this.cbxDisplay.Location = new System.Drawing.Point(70, 81);
+            this.cbxDisplay.Name = "cbxDisplay";
+            this.cbxDisplay.Size = new System.Drawing.Size(162, 21);
+            this.cbxDisplay.TabIndex = 5;
+            this.cbxDisplay.SelectionChangeCommitted += new System.EventHandler(this.cbxDisplay_SelectionChangeCommitted);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 84);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(47, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Display:";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(714, 114);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.cbxDisplay);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtFilepath);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.btnSet);
             this.Controls.Add(this.btnRemove);
-            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+            this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(253, 113);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DynWallpaper";
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -111,6 +139,8 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.TextBox txtFilepath;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox cbxDisplay;
+        private System.Windows.Forms.Label label2;
     }
 }
 
