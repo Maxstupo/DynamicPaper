@@ -100,7 +100,17 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="LibVLCSharp.WinForms">
+      <Version>3.4.6</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="VideoLAN.LibVLC.Windows">
+      <Version>3.0.11</Version>
+    </PackageReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="DynWallpaper.ico" />
   </ItemGroup>
