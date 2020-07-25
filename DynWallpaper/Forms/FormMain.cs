@@ -45,7 +45,7 @@
 
             Screen[] screens = Screen.AllScreens;
             for (int i = 0; i < screens.Length; i++)
-                cbxDisplay.Items.Add(new ScreenInfo(screens[i], i));
+                cbxDisplay.Items.Add(new ScreenInfo(screens[i], i + 1));
 
             cbxDisplay.SelectedIndex = 0;
         }
