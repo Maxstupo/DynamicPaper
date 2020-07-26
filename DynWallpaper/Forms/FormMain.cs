@@ -2,6 +2,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Windows.Forms;
     using HeyRed.Mime;
     using LibVLCSharp.Shared;
@@ -13,6 +14,8 @@
 
         public Screen SelectedScreen => (cbxDisplay.SelectedItem as ScreenInfo)?.Screen;
 
+        public WallpaperBase SelectedWallpaper => SelectedScreen == null ? null : (wallpapers.TryGetValue(SelectedScreen, out WallpaperBase wallpaper) ? wallpaper : null);
+
         private readonly Dictionary<Screen, WallpaperBase> wallpapers = new Dictionary<Screen, WallpaperBase>();
 
         public FormMain() {
@@ -22,17 +25,36 @@
             InitializeComponent();
 
             Application.ApplicationExit += Application_ApplicationExit;
+
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
 
 
             cbxImageMode.DataSource = Enum.GetValues(typeof(PictureBoxSizeMode));
             cbxImageMode.SelectedItem = PictureBoxSizeMode.Zoom;
 
+            volumeSlider.VolumeChanged += VolumeSlider_VolumeChanged;
+            timeline.TimeChanged += Timeline_TimeChanged;
 
             if (!WallpaperSystem.Init()) {
                 MessageBox.Show(this, "Failed to initialize wallpaper system!", "DynWallpaper", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
+
+        }
+
+
+
+        private void Timeline_TimeChanged(object sender, float newTime) {
+            WallpaperBase wallpaper = SelectedWallpaper;
+            if (wallpaper != null)
+                wallpaper.Position = newTime;
+        }
+
+        private void VolumeSlider_VolumeChanged(object sender, float newVolume) {
+            WallpaperBase wallpaper = SelectedWallpaper;
+            if (wallpaper != null)
+                wallpaper.Volume = newVolume;
+
 
         }
 
@@ -54,6 +76,8 @@
         }
 
         private void RefreshDisplayList() {
+            int oldIndex = cbxDisplay.Items.Count == 0 ? 0 : cbxDisplay.SelectedIndex;
+
             cbxDisplay.Items.Clear();
             cbxDisplay.DisplayMember = nameof(ScreenInfo.DisplayName);
 
@@ -61,7 +85,9 @@
             for (int i = 0; i < screens.Length; i++)
                 cbxDisplay.Items.Add(new ScreenInfo(screens[i], i + 1));
 
-            cbxDisplay.SelectedIndex = 0;
+            cbxDisplay.SelectedIndex = oldIndex;
+
+            cbxDisplay_SelectionChangeCommitted(null, EventArgs.Empty);
         }
 
 
@@ -116,13 +142,10 @@
         }
 
         private void btnRemove_Click(object sender, EventArgs e) {
-            Screen screen = SelectedScreen;
+            WallpaperBase wallpaper = SelectedWallpaper;
 
-            if (screen == null)
-                return;
-
-            if (wallpapers.TryGetValue(screen, out WallpaperBase wallpaper)) {
-                wallpapers.Remove(screen);
+            if (wallpaper != null) {
+                wallpapers.Remove(SelectedScreen);
 
                 wallpaper.Close();
 
@@ -148,35 +171,112 @@
             wallpaper.Show();
             wallpaper.Bounds = WallpaperSystem.GetScreenBounds(screen, SystemInformation.VirtualScreen);
 
+            wallpaper.SizeMode = (PictureBoxSizeMode) cbxImageMode.SelectedItem;
+            wallpaper.Looping = cbLooping.Checked;
+            wallpaper.BackColor = btnBackgroundColor.BackColor;
+            wallpaper.Volume = volumeSlider.Volume;
+
+            wallpaper.PositionChanged += Wallpaper_PositionChanged;
+            wallpaper.PlayingChanged += Wallpaper_PlayingChanged;
+
             WallpaperSystem.SetParent(wallpaper);
 
             return wallpaper;
         }
 
+        private void Wallpaper_PlayingChanged(object sender, EventArgs e) {
+            WallpaperBase wallpaper = SelectedWallpaper;
+
+            if (sender.Equals(wallpaper)) {
+                btnPause.Text = wallpaper.IsPlaying ? "Pause" : "Play";
+            }
+        }
+
+        private void Wallpaper_PositionChanged(object sender, float newPosition) {
+            WallpaperBase wallpaper = SelectedWallpaper;
+            if (sender.Equals(wallpaper)) {
+                timeline.DisableNotify = true;
+                timeline.Time = newPosition;
+                timeline.DisableNotify = false;
+
+
+            }
+        }
+
         private void cbxDisplay_SelectionChangeCommitted(object sender, EventArgs e) {
-            Screen screen = SelectedScreen;
+            WallpaperBase wallpaper = SelectedWallpaper;
 
-            if (screen == null)
-                return;
+            if (wallpaper != null) {
+                btnRemove.Enabled = wallpapers.ContainsKey(SelectedScreen);
 
-            btnRemove.Enabled = wallpapers.ContainsKey(screen);
+                txtFilepath.Text = wallpaper.Filepath;
+                volumeSlider.Volume = wallpaper.Volume;
+                btnBackgroundColor.BackColor = wallpaper.BackColor;
+                cbxImageMode.SelectedItem = wallpaper.SizeMode;
+                cbLooping.Checked = wallpaper.Looping;
+                timeline.Time = wallpaper.Position;
+            }
         }
 
         private void txtFilepath_TextChanged(object sender, EventArgs e) {
+            btnSet.Enabled = File.Exists(txtFilepath.Text);
+
+            string mimeType = MimeTypesMap.GetMimeType(txtFilepath.Text);
+            tabControl.Enabled = true;
+            if (mimeType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase)) {
+                tabControl.SelectedIndex = 1;
+
+            } else if (mimeType.StartsWith("video", StringComparison.InvariantCultureIgnoreCase)) {
+                tabControl.SelectedIndex = 0;
+
+            } else {
+                tabControl.Enabled = false;
+            }
+
 
         }
 
-        /// <summary>
-        /// Click event that will display a color picker dialog and change the background color of the control that invoked it.
-        /// </summary>
-        private void pickColor_Click(object sender, EventArgs e) {
-            if (sender is Control c) {
-                using (ColorDialog dialog = new ColorDialog()) {
-                    if (dialog.ShowDialog(this) == DialogResult.OK)
-                        c.BackColor = dialog.Color;
-                }
+        private void ApplyWallpaperOptions(object sender, EventArgs e) {
+            WallpaperBase wallpaper = SelectedWallpaper;
+
+            if (wallpaper != null) {
+                wallpaper.SizeMode = (PictureBoxSizeMode) cbxImageMode.SelectedItem;
+                wallpaper.BackColor = btnBackgroundColor.BackColor;
+                wallpaper.Looping = cbLooping.Checked;
             }
         }
+
+        private void btnBackgroundColor_Click(object sender, EventArgs e) {
+
+            using (ColorDialog dialog = new ColorDialog()) {
+                if (dialog.ShowDialog(this) == DialogResult.OK) {
+                    btnBackgroundColor.BackColor = dialog.Color;
+
+                    ApplyWallpaperOptions(sender, e);
+                }
+            }
+
+        }
+
+        private void exitToolStripMenuItem1_Click(object sender, EventArgs e) {
+            Application.Exit();
+        }
+
+        private void btnPause_Click(object sender, EventArgs e) {
+            WallpaperBase wallpaper = SelectedWallpaper;
+
+            if (wallpaper != null)
+                wallpaper.Toggle();
+        }
+
+        private void minimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e) {
+            minimizeToTrayToolStripMenuItem.Checked = !minimizeToTrayToolStripMenuItem.Checked;
+        }
+
+        private void FormMain_Resize(object sender, EventArgs e) {
+
+        }
+
     }
 
 }

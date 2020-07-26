@@ -6,6 +6,7 @@
 
     // Really should use a base slider class for timeline and volume sliders.
     public partial class TimelineSlider : UserControl {
+        private readonly object _lock = new object();
 
         private float time = 1.0f;
         public float Time {
@@ -14,18 +15,21 @@
                 float newTime = Math.Max(Math.Min(value, 1f), 0f);
 
                 if (time != newTime) {
-                    time = newTime;
-                    if (!DisableNotify)
-                        TimeChanged?.Invoke(this, EventArgs.Empty);
+                    lock (_lock) {
+                        time = newTime;
+                        if (!DisableNotify)
+                            TimeChanged?.Invoke(this, time);
+                    }
                     Invalidate();
                 }
 
             }
         }
 
-        public event EventHandler TimeChanged;
+        public event EventHandler<float> TimeChanged;
 
-        public bool DisableNotify { get; set; } = false;
+        private bool disableNotify = false;
+        public bool DisableNotify { get => disableNotify; set { lock (_lock) disableNotify = value; } }
 
 
         public Color OutlineColor { get; set; } = Color.Black;

@@ -52,11 +52,11 @@
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabControl = new Maxstupo.DynWallpaper.Controls.TablessTabControl();
             this.tpVideo = new System.Windows.Forms.TabPage();
             this.btnPause = new System.Windows.Forms.Button();
             this.timeline = new Maxstupo.DynWallpaper.Controls.TimelineSlider();
-            this.volumeSlider1 = new Maxstupo.DynWallpaper.Controls.VolumeSlider();
+            this.volumeSlider = new Maxstupo.DynWallpaper.Controls.VolumeSlider();
             this.tpImage = new System.Windows.Forms.TabPage();
             this.label4 = new System.Windows.Forms.Label();
             this.btnBackgroundColor = new System.Windows.Forms.Button();
@@ -73,10 +73,10 @@
             // 
             this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemove.Enabled = false;
-            this.btnRemove.Location = new System.Drawing.Point(542, 250);
+            this.btnRemove.Location = new System.Drawing.Point(542, 215);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(75, 23);
-            this.btnRemove.TabIndex = 0;
+            this.btnRemove.TabIndex = 5;
             this.btnRemove.Text = "Remove";
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
@@ -84,10 +84,11 @@
             // btnSet
             // 
             this.btnSet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSet.Location = new System.Drawing.Point(461, 250);
+            this.btnSet.Enabled = false;
+            this.btnSet.Location = new System.Drawing.Point(461, 215);
             this.btnSet.Name = "btnSet";
             this.btnSet.Size = new System.Drawing.Size(75, 23);
-            this.btnSet.TabIndex = 1;
+            this.btnSet.TabIndex = 4;
             this.btnSet.Text = "Set";
             this.btnSet.UseVisualStyleBackColor = true;
             this.btnSet.Click += new System.EventHandler(this.btnSet_Click);
@@ -111,7 +112,7 @@
             this.txtFilepath.Name = "txtFilepath";
             this.txtFilepath.ReadOnly = true;
             this.txtFilepath.Size = new System.Drawing.Size(454, 22);
-            this.txtFilepath.TabIndex = 3;
+            this.txtFilepath.TabIndex = 1;
             this.txtFilepath.TextChanged += new System.EventHandler(this.txtFilepath_TextChanged);
             // 
             // label1
@@ -120,7 +121,7 @@
             this.label1.Location = new System.Drawing.Point(6, 25);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
-            this.label1.TabIndex = 4;
+            this.label1.TabIndex = 0;
             this.label1.Text = "Filepath:";
             // 
             // cbxDisplay
@@ -132,7 +133,7 @@
             this.cbxDisplay.Location = new System.Drawing.Point(65, 34);
             this.cbxDisplay.Name = "cbxDisplay";
             this.cbxDisplay.Size = new System.Drawing.Size(552, 21);
-            this.cbxDisplay.TabIndex = 5;
+            this.cbxDisplay.TabIndex = 2;
             this.cbxDisplay.SelectionChangeCommitted += new System.EventHandler(this.cbxDisplay_SelectionChangeCommitted);
             // 
             // label2
@@ -141,7 +142,7 @@
             this.label2.Location = new System.Drawing.Point(12, 37);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
-            this.label2.TabIndex = 6;
+            this.label2.TabIndex = 1;
             this.label2.Text = "Display:";
             // 
             // notifyIcon
@@ -181,15 +182,16 @@
             // 
             this.cbxImageMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxImageMode.FormattingEnabled = true;
-            this.cbxImageMode.Location = new System.Drawing.Point(86, 9);
+            this.cbxImageMode.Location = new System.Drawing.Point(76, 0);
             this.cbxImageMode.Name = "cbxImageMode";
             this.cbxImageMode.Size = new System.Drawing.Size(121, 21);
             this.cbxImageMode.TabIndex = 8;
+            this.cbxImageMode.SelectionChangeCommitted += new System.EventHandler(this.ApplyWallpaperOptions);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 12);
+            this.label3.Location = new System.Drawing.Point(-4, 3);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(74, 13);
             this.label3.TabIndex = 9;
@@ -198,12 +200,13 @@
             // cbLooping
             // 
             this.cbLooping.AutoSize = true;
-            this.cbLooping.Location = new System.Drawing.Point(6, 6);
+            this.cbLooping.Location = new System.Drawing.Point(0, 0);
             this.cbLooping.Name = "cbLooping";
             this.cbLooping.Size = new System.Drawing.Size(69, 17);
-            this.cbLooping.TabIndex = 11;
+            this.cbLooping.TabIndex = 0;
             this.cbLooping.Text = "Looping";
             this.cbLooping.UseVisualStyleBackColor = true;
+            this.cbLooping.CheckedChanged += new System.EventHandler(this.ApplyWallpaperOptions);
             // 
             // menuStrip1
             // 
@@ -214,7 +217,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(629, 24);
-            this.menuStrip1.TabIndex = 11;
+            this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
@@ -228,8 +231,10 @@
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(93, 22);
+            this.exitToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem1.Text = "E&xit";
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -244,8 +249,9 @@
             // minimizeToTrayToolStripMenuItem
             // 
             this.minimizeToTrayToolStripMenuItem.Name = "minimizeToTrayToolStripMenuItem";
-            this.minimizeToTrayToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.minimizeToTrayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.minimizeToTrayToolStripMenuItem.Text = "Minimize to tray";
+            this.minimizeToTrayToolStripMenuItem.Click += new System.EventHandler(this.minimizeToTrayToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -279,35 +285,37 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tpVideo);
             this.tabControl.Controls.Add(this.tpImage);
-            this.tabControl.Location = new System.Drawing.Point(9, 50);
+            this.tabControl.Location = new System.Drawing.Point(9, 55);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(590, 118);
-            this.tabControl.TabIndex = 12;
+            this.tabControl.Size = new System.Drawing.Size(590, 78);
+            this.tabControl.TabIndex = 3;
             // 
             // tpVideo
             // 
+            this.tpVideo.BackColor = System.Drawing.SystemColors.Control;
             this.tpVideo.Controls.Add(this.btnPause);
             this.tpVideo.Controls.Add(this.timeline);
             this.tpVideo.Controls.Add(this.cbLooping);
-            this.tpVideo.Controls.Add(this.volumeSlider1);
+            this.tpVideo.Controls.Add(this.volumeSlider);
             this.tpVideo.Location = new System.Drawing.Point(4, 22);
+            this.tpVideo.Margin = new System.Windows.Forms.Padding(0);
             this.tpVideo.Name = "tpVideo";
-            this.tpVideo.Padding = new System.Windows.Forms.Padding(3);
-            this.tpVideo.Size = new System.Drawing.Size(582, 92);
+            this.tpVideo.Size = new System.Drawing.Size(582, 52);
             this.tpVideo.TabIndex = 0;
             this.tpVideo.Text = "Video";
-            this.tpVideo.UseVisualStyleBackColor = true;
             // 
             // btnPause
             // 
             this.btnPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPause.Location = new System.Drawing.Point(6, 63);
+            this.btnPause.Location = new System.Drawing.Point(-1, 26);
             this.btnPause.Name = "btnPause";
             this.btnPause.Size = new System.Drawing.Size(75, 23);
-            this.btnPause.TabIndex = 14;
-            this.btnPause.Text = "Play";
+            this.btnPause.TabIndex = 2;
+            this.btnPause.Text = "Pause";
             this.btnPause.UseVisualStyleBackColor = true;
+            this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
             // 
             // timeline
             // 
@@ -316,42 +324,44 @@
             this.timeline.BackColor = System.Drawing.Color.LightGray;
             this.timeline.DisableNotify = false;
             this.timeline.ForegroundColor = System.Drawing.Color.LightGreen;
-            this.timeline.Location = new System.Drawing.Point(87, 66);
+            this.timeline.Location = new System.Drawing.Point(83, 29);
             this.timeline.Name = "timeline";
             this.timeline.OutlineColor = System.Drawing.Color.Black;
-            this.timeline.Size = new System.Drawing.Size(489, 16);
-            this.timeline.TabIndex = 13;
+            this.timeline.Size = new System.Drawing.Size(498, 16);
+            this.timeline.TabIndex = 3;
+            this.timeline.TabStop = false;
             this.timeline.Time = 0F;
             // 
-            // volumeSlider1
+            // volumeSlider
             // 
-            this.volumeSlider1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.volumeSlider1.BackColor = System.Drawing.Color.LightGray;
-            this.volumeSlider1.Location = new System.Drawing.Point(444, 6);
-            this.volumeSlider1.MinDb = -48F;
-            this.volumeSlider1.Name = "volumeSlider1";
-            this.volumeSlider1.Size = new System.Drawing.Size(132, 17);
-            this.volumeSlider1.TabIndex = 12;
-            this.volumeSlider1.Volume = 1F;
+            this.volumeSlider.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.volumeSlider.BackColor = System.Drawing.Color.LightGray;
+            this.volumeSlider.Location = new System.Drawing.Point(446, 0);
+            this.volumeSlider.MinDb = -20F;
+            this.volumeSlider.Name = "volumeSlider";
+            this.volumeSlider.Size = new System.Drawing.Size(135, 17);
+            this.volumeSlider.TabIndex = 1;
+            this.volumeSlider.TabStop = false;
+            this.volumeSlider.Volume = 0.25F;
             // 
             // tpImage
             // 
+            this.tpImage.BackColor = System.Drawing.SystemColors.Control;
             this.tpImage.Controls.Add(this.label4);
             this.tpImage.Controls.Add(this.btnBackgroundColor);
             this.tpImage.Controls.Add(this.label3);
             this.tpImage.Controls.Add(this.cbxImageMode);
             this.tpImage.Location = new System.Drawing.Point(4, 22);
+            this.tpImage.Margin = new System.Windows.Forms.Padding(0);
             this.tpImage.Name = "tpImage";
-            this.tpImage.Padding = new System.Windows.Forms.Padding(3);
-            this.tpImage.Size = new System.Drawing.Size(582, 68);
+            this.tpImage.Size = new System.Drawing.Size(582, 52);
             this.tpImage.TabIndex = 1;
             this.tpImage.Text = "Image";
-            this.tpImage.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 41);
+            this.label4.Location = new System.Drawing.Point(-4, 30);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(103, 13);
             this.label4.TabIndex = 11;
@@ -359,13 +369,14 @@
             // 
             // btnBackgroundColor
             // 
-            this.btnBackgroundColor.Location = new System.Drawing.Point(112, 36);
+            this.btnBackgroundColor.BackColor = System.Drawing.Color.Black;
+            this.btnBackgroundColor.Location = new System.Drawing.Point(104, 25);
             this.btnBackgroundColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnBackgroundColor.Name = "btnBackgroundColor";
             this.btnBackgroundColor.Size = new System.Drawing.Size(23, 23);
             this.btnBackgroundColor.TabIndex = 10;
-            this.btnBackgroundColor.UseVisualStyleBackColor = true;
-            this.btnBackgroundColor.Click += new System.EventHandler(this.pickColor_Click);
+            this.btnBackgroundColor.UseVisualStyleBackColor = false;
+            this.btnBackgroundColor.Click += new System.EventHandler(this.btnBackgroundColor_Click);
             // 
             // groupBox1
             // 
@@ -378,8 +389,8 @@
             this.groupBox1.Controls.Add(this.btnBrowse);
             this.groupBox1.Location = new System.Drawing.Point(12, 70);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(605, 174);
-            this.groupBox1.TabIndex = 13;
+            this.groupBox1.Size = new System.Drawing.Size(605, 139);
+            this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Wallpaper";
             // 
@@ -387,7 +398,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(629, 281);
+            this.ClientSize = new System.Drawing.Size(629, 246);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.label2);
@@ -398,11 +409,12 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(300, 280);
+            this.MinimumSize = new System.Drawing.Size(300, 255);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DynWallpaper";
             this.Load += new System.EventHandler(this.FormMain_Load);
+            this.Resize += new System.EventHandler(this.FormMain_Resize);
             this.cmsNotifyIcon.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -444,9 +456,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
         private System.Windows.Forms.CheckBox cbLooping;
-        private Controls.VolumeSlider volumeSlider1;
+        private Controls.VolumeSlider volumeSlider;
         private Controls.TimelineSlider timeline;
-        private System.Windows.Forms.TabControl tabControl;
+        private Maxstupo.DynWallpaper.Controls.TablessTabControl tabControl;
         private System.Windows.Forms.TabPage tpVideo;
         private System.Windows.Forms.TabPage tpImage;
         private System.Windows.Forms.Label label4;

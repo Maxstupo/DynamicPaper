@@ -13,6 +13,12 @@
 
         private readonly VideoView videoView;
 
+        public override float Volume { get => player.Volume / 100f; set => player.Volume = (int) (value * 100); }
+
+        public override float Position { get => player.Position; set => player.Position = value; }
+
+        public override bool IsPlaying => player.IsPlaying;
+
         public WallpaperVideo() {
             libVLC = new LibVLC();
             player = new MediaPlayer(libVLC);
@@ -24,22 +30,35 @@
                 MediaPlayer = player
             };
 
+            player.PositionChanged += Player_PositionChanged;
+
+            player.Paused += (s, e) => OnPlayingChanged();
+            player.Playing += (s, e) => OnPlayingChanged();
+
             Controls.Add(videoView);
 
             FormClosing += WallpaperVideo_FormClosing;
+        }
+
+        private void Player_PositionChanged(object sender, MediaPlayerPositionChangedEventArgs e) {
+            OnPositionChanged(e.Position);
         }
 
         private void WallpaperVideo_FormClosing(object sender, FormClosingEventArgs e) {
             player.Stop();
         }
 
-        public override bool ApplyWallpaper(string filepath) {
-            if (!MimeTypesMap.GetMimeType(filepath).StartsWith("video", StringComparison.InvariantCultureIgnoreCase))
+        public override bool ApplyWallpaper() {
+            if (!MimeTypesMap.GetMimeType(Filepath).StartsWith("video", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
-            player.Play(new Media(libVLC, filepath, FromType.FromPath));
+            player.Play(new Media(libVLC, Filepath, FromType.FromPath));
 
             return true;
+        }
+
+        public override void Toggle() {
+            player.Pause();            
         }
 
         protected override void Dispose(bool disposing) {
