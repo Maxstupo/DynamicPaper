@@ -31,13 +31,16 @@
             };
 
             player.PositionChanged += Player_PositionChanged;
-
-            player.Paused += (s, e) => OnPlayingChanged();
-            player.Playing += (s, e) => OnPlayingChanged();
+            player.Paused += Player_PlayStateChanged;
+            player.Playing += Player_PlayStateChanged;
 
             Controls.Add(videoView);
 
             FormClosing += WallpaperVideo_FormClosing;
+        }
+
+        private void Player_PlayStateChanged(object sender, EventArgs e) {
+            OnPlayingChanged();
         }
 
         private void Player_PositionChanged(object sender, MediaPlayerPositionChangedEventArgs e) {
@@ -58,16 +61,17 @@
         }
 
         public override void Toggle() {
-            player.Pause();            
+            player.Pause();
         }
 
         protected override void Dispose(bool disposing) {
             base.Dispose(disposing);
 
             if (disposing) {
-                player.Dispose();
                 libVLC.Dispose();
+                player.Dispose();
             }
+
         }
 
     }

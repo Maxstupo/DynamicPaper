@@ -2,13 +2,18 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.IO;
+    using System.Linq;
+    using System.Text;
     using System.Windows.Forms;
     using HeyRed.Mime;
     using LibVLCSharp.Shared;
     using Maxstupo.DynWallpaper.Forms.Wallpapers;
     using Maxstupo.DynWallpaper.Utility;
     using Microsoft.Win32;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     public partial class FormMain : Form {
 
@@ -17,6 +22,15 @@
         public WallpaperBase SelectedWallpaper => SelectedScreen == null ? null : (wallpapers.TryGetValue(SelectedScreen, out WallpaperBase wallpaper) ? wallpaper : null);
 
         private readonly Dictionary<Screen, WallpaperBase> wallpapers = new Dictionary<Screen, WallpaperBase>();
+
+        public string AppDirectory {
+            get {
+                string rootDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                return Path.Combine(rootDirectory, "DynWallpaper");
+            }
+        }
+
+        public string ConfigFilepath => Path.Combine(AppDirectory, "config.json");
 
         public FormMain() {
             if (!DesignMode)
@@ -40,6 +54,7 @@
                 Application.Exit();
             }
 
+            Directory.CreateDirectory(AppDirectory);
         }
 
 
@@ -112,7 +127,12 @@
             if (screen == null)
                 return;
 
-            string mimeType = MimeTypesMap.GetMimeType(txtFilepath.Text);
+            SetWallpaper(screen, txtFilepath.Text);
+        }
+
+        private WallpaperBase SetWallpaper(Screen screen, string filepath, bool silent = false) {
+
+            string mimeType = MimeTypesMap.GetMimeType(filepath);
 
             if (!wallpapers.TryGetValue(screen, out WallpaperBase wallpaper)) {
 
@@ -121,25 +141,30 @@
                 wallpapers.Add(screen, wallpaper);
             }
 
-            if (!wallpaper.ApplyWallpaper(txtFilepath.Text)) {
+            if (!wallpaper.ApplyWallpaper(filepath)) {
 
                 // The current wallpaper doesn't support the specified file.
 
                 WallpaperBase newWallpaper = CreateWallpaper(screen, mimeType);
 
                 if (newWallpaper == null) {
-                    MessageBox.Show(this, "The specified file format is unsupported by DynWallpaper!", "DynWallpaper", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
+                    if (!silent)
+                        MessageBox.Show(this, "The specified file format is unsupported by DynWallpaper!", "DynWallpaper", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return null;
                 } else { // A wallpaper is supported for this file, so switch to it.
                     wallpaper.Close();
                     wallpapers[screen] = newWallpaper;
-                    newWallpaper.ApplyWallpaper(txtFilepath.Text);
+                    wallpaper = newWallpaper;
+                    newWallpaper.ApplyWallpaper(filepath);
                 }
 
             }
 
-            cbxDisplay_SelectionChangeCommitted(sender, e);
+            cbxDisplay_SelectionChangeCommitted(null, EventArgs.Empty);
+
+            return wallpaper;
         }
+
 
         private void btnRemove_Click(object sender, EventArgs e) {
             WallpaperBase wallpaper = SelectedWallpaper;
@@ -271,10 +296,105 @@
 
         private void minimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e) {
             minimizeToTrayToolStripMenuItem.Checked = !minimizeToTrayToolStripMenuItem.Checked;
+            SaveSettings(null, EventArgs.Empty);
         }
 
         private void FormMain_Resize(object sender, EventArgs e) {
 
+        }
+
+        private void SaveSettings(object sender, EventArgs e) {
+            StringBuilder sb = new StringBuilder();
+
+            using (StringWriter sw = new StringWriter(sb)) {
+                using (JsonTextWriter jw = new JsonTextWriter(sw)) {
+                    jw.Formatting = Formatting.Indented;
+                    jw.WriteStartObject();
+                    {
+                        jw.WritePropertyName("minimize_to_tray");
+                        jw.WriteValue(minimizeToTrayToolStripMenuItem.Checked);
+
+                        jw.WritePropertyName("wallpapers");
+                        jw.WriteStartArray();
+                        {
+                            foreach (KeyValuePair<Screen, WallpaperBase> pair in wallpapers) {
+                                jw.WriteStartObject();
+                                {
+                                    jw.WritePropertyName("display");
+                                    jw.WriteValue(pair.Key.DeviceName);
+
+                                    jw.WritePropertyName("filepath");
+                                    jw.WriteValue(pair.Value.Filepath);
+
+
+                                    jw.WritePropertyName("volume");
+                                    jw.WriteValue(pair.Value.Volume);
+
+                                    jw.WritePropertyName("looping");
+                                    jw.WriteValue(pair.Value.Looping);
+
+
+                                    jw.WritePropertyName("background");
+                                    jw.WriteValue($"{pair.Value.BackColor.R}, {pair.Value.BackColor.G}, {pair.Value.BackColor.B}");
+
+                                    jw.WritePropertyName("mode");
+                                    jw.WriteValue(pair.Value.SizeMode);
+
+                                }
+                                jw.WriteEndObject();
+                            }
+                        }
+                        jw.WriteEndArray();
+                    }
+                    jw.WriteEndObject();
+                }
+            }
+
+            File.WriteAllText(ConfigFilepath, sb.ToString());
+            System.Diagnostics.Process.Start(AppDirectory);
+        }
+
+        private void LoadSettings() {
+            if (!File.Exists(ConfigFilepath))
+                return;
+
+            foreach (WallpaperBase wallpaper in wallpapers.Values)
+                wallpaper.Close();
+            wallpapers.Clear();
+
+            WallpaperSystem.ResetDesktopBackground();
+            cbxDisplay_SelectionChangeCommitted(null, EventArgs.Empty);
+
+
+            JObject json = JObject.Parse(File.ReadAllText(ConfigFilepath));
+
+            minimizeToTrayToolStripMenuItem.Checked = json["minimize_to_tray"].Value<bool>();
+
+            foreach (JObject wallpaperItem in json["wallpapers"]) {
+                string displayDeviceName = wallpaperItem["display"].Value<string>();
+
+                Screen screen = Screen.AllScreens.FirstOrDefault(x => x.DeviceName == displayDeviceName);
+                if (screen == null)
+                    continue;
+
+                string filepath = wallpaperItem["filepath"].Value<string>();
+
+                WallpaperBase wallpaper = SetWallpaper(screen, filepath, true);
+                if (wallpaper != null) {
+                    wallpaper.Volume = wallpaperItem["volume"].Value<float>();
+                    wallpaper.Looping = wallpaperItem["looping"].Value<bool>();
+                    int modeId = wallpaperItem["mode"].Value<int>();
+                    wallpaper.SizeMode = (PictureBoxSizeMode) modeId;
+                    string[] rgb = wallpaperItem["background"].Value<string>().Split(',');
+                    if (rgb.Length == 3 && int.TryParse(rgb[0], out int r) && int.TryParse(rgb[1], out int g) && int.TryParse(rgb[2], out int b))
+                        wallpaper.BackColor = Color.FromArgb(r, g, b);
+
+                }
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
+            LoadSettings();
         }
 
     }
