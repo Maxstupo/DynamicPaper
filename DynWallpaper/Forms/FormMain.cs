@@ -21,16 +21,22 @@
 
             InitializeComponent();
 
+            Application.ApplicationExit += Application_ApplicationExit;
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
+
+            cbxImageMode.DataSource = Enum.GetValues(typeof(PictureBoxSizeMode));
+            cbxImageMode.SelectedItem = PictureBoxSizeMode.Zoom;
+
+
             if (!WallpaperSystem.Init()) {
                 MessageBox.Show(this, "Failed to initialize wallpaper system!", "DynWallpaper", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
+
         }
 
         private void FormMain_Load(object sender, EventArgs e) {
-            Application.ApplicationExit += Application_ApplicationExit;
-            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-
             RefreshDisplayList();
         }
 
@@ -156,7 +162,21 @@
             btnRemove.Enabled = wallpapers.ContainsKey(screen);
         }
 
+        private void txtFilepath_TextChanged(object sender, EventArgs e) {
 
+        }
+
+        /// <summary>
+        /// Click event that will display a color picker dialog and change the background color of the control that invoked it.
+        /// </summary>
+        private void pickColor_Click(object sender, EventArgs e) {
+            if (sender is Control c) {
+                using (ColorDialog dialog = new ColorDialog()) {
+                    if (dialog.ShowDialog(this) == DialogResult.OK)
+                        c.BackColor = dialog.Color;
+                }
+            }
+        }
     }
 
 }
