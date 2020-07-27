@@ -16,5 +16,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments/Libraries
 
 * [LibVLC](https://code.videolan.org/videolan/libvlc-nuget) & [LibVLCSharp](https://code.videolan.org/videolan/LibVLCSharp)
+* [OpenTK](https://github.com/opentk/opentk)
 * [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
 * [MimeTypesMap](https://github.com/hey-red/MimeTypesMap)
