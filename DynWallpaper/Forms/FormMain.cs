@@ -69,12 +69,11 @@
             WallpaperBase wallpaper = SelectedWallpaper;
             if (wallpaper != null)
                 wallpaper.Volume = newVolume;
-
-
         }
 
         private void FormMain_Load(object sender, EventArgs e) {
             RefreshDisplayList();
+            LoadSettings();
         }
 
         private void Application_ApplicationExit(object sender, EventArgs e) {
@@ -128,6 +127,7 @@
                 return;
 
             SetWallpaper(screen, txtFilepath.Text);
+            SaveSettings();
         }
 
         private WallpaperBase SetWallpaper(Screen screen, string filepath, bool silent = false) {
@@ -177,6 +177,8 @@
                 WallpaperSystem.ResetDesktopBackground();
 
                 cbxDisplay_SelectionChangeCommitted(sender, e);
+
+                SaveSettings();
             }
         }
 
@@ -296,14 +298,14 @@
 
         private void minimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e) {
             minimizeToTrayToolStripMenuItem.Checked = !minimizeToTrayToolStripMenuItem.Checked;
-            SaveSettings(null, EventArgs.Empty);
+            SaveSettings();
         }
 
         private void FormMain_Resize(object sender, EventArgs e) {
 
         }
 
-        private void SaveSettings(object sender, EventArgs e) {
+        private void SaveSettings() {
             StringBuilder sb = new StringBuilder();
 
             using (StringWriter sw = new StringWriter(sb)) {
@@ -351,7 +353,6 @@
             }
 
             File.WriteAllText(ConfigFilepath, sb.ToString());
-            System.Diagnostics.Process.Start(AppDirectory);
         }
 
         private void LoadSettings() {
@@ -391,10 +392,6 @@
 
                 }
             }
-        }
-
-        private void button2_Click(object sender, EventArgs e) {
-            LoadSettings();
         }
 
     }
