@@ -14,6 +14,10 @@
             Id = GL.GenVertexArray();
         }
 
+        public VertexArray(VertexBuffer vbo, ElementBuffer ebo = null) : this() {
+            Link(vbo, ebo);
+        }
+
         // Associates the VBO (and optional EBO) with this VAO.
         public void Link(VertexBuffer vbo, ElementBuffer ebo = null) {
             Bind();

@@ -65,8 +65,8 @@
         }
 
         protected override void Dispose(bool disposing) {
-            if(disposing) 
-                player.PositionChanged -= Player_PositionChanged;
+           // if(disposing) 
+           //     player.PositionChanged -= Player_PositionChanged;
 
             base.Dispose(disposing);
 

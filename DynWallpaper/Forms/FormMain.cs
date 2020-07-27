@@ -10,6 +10,7 @@
     using HeyRed.Mime;
     using LibVLCSharp.Shared;
     using Maxstupo.DynWallpaper.Forms.Wallpapers;
+    using Maxstupo.DynWallpaper.Graphics;
     using Maxstupo.DynWallpaper.Utility;
     using Microsoft.Win32;
     using Newtonsoft.Json;
@@ -428,6 +429,40 @@
         }
 
 
+
+        // TEMP: ------------------------------------------------------------------------------------
+        WallpaperBase stWallpaper;
+        private void btnShaderToyTest_Click(object sender, EventArgs e) {
+
+            if (stWallpaper != null) {
+                stWallpaper.Close();
+                stWallpaper.Dispose();
+                stWallpaper = null;
+                WallpaperSystem.ResetDesktopBackground();
+                return;
+            }
+
+            IRenderer renderer = new ShaderToyRenderer("Res/Shaders/supernova_remnant.shadertoy.vs",
+                                                       "Res/Textures/rgba_256_noise.png", "Res/Textures/black.png", "Res/Textures/bw_64_noise.png");
+
+            stWallpaper = new WallpaperOpenGL(renderer);
+
+            bool background = !cbShaderToyTestWindowed.Checked && SelectedScreen != null && !wallpapers.ContainsKey(SelectedScreen);
+
+            if (!background) {
+                stWallpaper.FormBorderStyle = FormBorderStyle.Sizable;
+                stWallpaper.StartPosition = FormStartPosition.CenterParent;
+                stWallpaper.ShowDialog(this);
+                stWallpaper.Dispose();
+                stWallpaper = null;
+            } else {
+                stWallpaper.Show();
+                stWallpaper.Bounds = WallpaperSystem.GetScreenBounds(SelectedScreen, SystemInformation.VirtualScreen);
+                WallpaperSystem.SetParent(stWallpaper);
+            }
+
+        }
+        //-------------------------------------------------------------------------------------------
     }
 
 }
