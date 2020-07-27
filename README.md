@@ -4,18 +4,9 @@ DynWallpaper provides support for desktop wallpapers that aren't just images. Cu
 ## Releases
 TBD
 
-#### Development Builds
-TBD
-
-## Installation & Setup
+### Installation & Setup
 Requires Windows 8 or above.
 
-TBD
-
-#### Prerequisites
-TBD
-
-## Wiki 
 TBD
 
 ## License
