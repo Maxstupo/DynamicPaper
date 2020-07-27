@@ -23,6 +23,9 @@
 
         private readonly Dictionary<Screen, WallpaperBase> wallpapers = new Dictionary<Screen, WallpaperBase>();
 
+        private FormWindowState prevWindowState;
+        private FormWindowState resumeWindowState;
+
         public string AppDirectory {
             get {
                 string rootDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -285,7 +288,7 @@
 
         }
 
-        private void exitToolStripMenuItem1_Click(object sender, EventArgs e) {
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
             Application.Exit();
         }
 
@@ -297,11 +300,41 @@
         }
 
         private void minimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e) {
+
             minimizeToTrayToolStripMenuItem.Checked = !minimizeToTrayToolStripMenuItem.Checked;
+            minimizeToTrayToolStripMenuItem1.Checked = minimizeToTrayToolStripMenuItem.Checked;
+
+            if (!minimizeToTrayToolStripMenuItem.Checked) {
+                Visible = true;
+                WindowState = resumeWindowState;
+            }
+
             SaveSettings();
         }
 
+        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            if (WindowState == FormWindowState.Minimized && !Visible) {
+                Visible = true;
+                WindowState = resumeWindowState;
+            }
+        }
+
+        private void showToolStripMenuItem_Click(object sender, EventArgs e) {
+            notifyIcon_MouseDoubleClick(sender, new MouseEventArgs(MouseButtons.Left, 0, 0, 0, 0));
+        }
+
         private void FormMain_Resize(object sender, EventArgs e) {
+
+            if (minimizeToTrayToolStripMenuItem.Checked && prevWindowState != WindowState && WindowState == FormWindowState.Minimized) {
+                resumeWindowState = prevWindowState;
+                notifyIcon.ShowBalloonTip(0, "DynWallpaper", "Now running in the background. Use tray icon to reveal.", ToolTipIcon.Info);
+                Visible = false;
+            }
+
+            prevWindowState = WindowState;
 
         }
 
@@ -393,6 +426,7 @@
                 }
             }
         }
+
 
     }
 

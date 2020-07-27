@@ -65,9 +65,13 @@
         }
 
         protected override void Dispose(bool disposing) {
+            if(disposing) 
+                player.PositionChanged -= Player_PositionChanged;
+
             base.Dispose(disposing);
 
             if (disposing) {
+              
                 libVLC.Dispose();
                 player.Dispose();
             }

@@ -37,12 +37,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.cmsNotifyIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.showHideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.minimizeToTrayToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cbxImageMode = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.cbLooping = new System.Windows.Forms.CheckBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,21 +50,24 @@
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabControl = new Maxstupo.DynWallpaper.Controls.TablessTabControl();
             this.tpVideo = new System.Windows.Forms.TabPage();
             this.btnPause = new System.Windows.Forms.Button();
             this.timeline = new Maxstupo.DynWallpaper.Controls.TimelineSlider();
+            this.cbLooping = new System.Windows.Forms.CheckBox();
             this.volumeSlider = new Maxstupo.DynWallpaper.Controls.VolumeSlider();
             this.tpImage = new System.Windows.Forms.TabPage();
             this.label4 = new System.Windows.Forms.Label();
             this.btnBackgroundColor = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cbxImageMode = new System.Windows.Forms.ComboBox();
             this.cmsNotifyIcon.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tpVideo.SuspendLayout();
             this.tpImage.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnRemove
@@ -151,62 +152,43 @@
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "DynWallpaper";
             this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
             // cmsNotifyIcon
             // 
             this.cmsNotifyIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showHideToolStripMenuItem,
+            this.showToolStripMenuItem,
+            this.minimizeToTrayToolStripMenuItem1,
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.cmsNotifyIcon.Name = "cmsNotifyIcon";
-            this.cmsNotifyIcon.Size = new System.Drawing.Size(134, 54);
+            this.cmsNotifyIcon.Size = new System.Drawing.Size(161, 76);
             // 
-            // showHideToolStripMenuItem
+            // showToolStripMenuItem
             // 
-            this.showHideToolStripMenuItem.Name = "showHideToolStripMenuItem";
-            this.showHideToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.showHideToolStripMenuItem.Text = "Show/Hide";
+            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.showToolStripMenuItem.Text = "Show";
+            this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
+            // 
+            // minimizeToTrayToolStripMenuItem1
+            // 
+            this.minimizeToTrayToolStripMenuItem1.Name = "minimizeToTrayToolStripMenuItem1";
+            this.minimizeToTrayToolStripMenuItem1.Size = new System.Drawing.Size(160, 22);
+            this.minimizeToTrayToolStripMenuItem1.Text = "Minimize to tray";
+            this.minimizeToTrayToolStripMenuItem1.Click += new System.EventHandler(this.minimizeToTrayToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(130, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(157, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            // 
-            // cbxImageMode
-            // 
-            this.cbxImageMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbxImageMode.FormattingEnabled = true;
-            this.cbxImageMode.Location = new System.Drawing.Point(76, 0);
-            this.cbxImageMode.Name = "cbxImageMode";
-            this.cbxImageMode.Size = new System.Drawing.Size(121, 21);
-            this.cbxImageMode.TabIndex = 8;
-            this.cbxImageMode.SelectionChangeCommitted += new System.EventHandler(this.ApplyWallpaperOptions);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(-4, 3);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(74, 13);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Image Mode:";
-            // 
-            // cbLooping
-            // 
-            this.cbLooping.AutoSize = true;
-            this.cbLooping.Location = new System.Drawing.Point(0, 0);
-            this.cbLooping.Name = "cbLooping";
-            this.cbLooping.Size = new System.Drawing.Size(69, 17);
-            this.cbLooping.TabIndex = 0;
-            this.cbLooping.Text = "Looping";
-            this.cbLooping.UseVisualStyleBackColor = true;
-            this.cbLooping.CheckedChanged += new System.EventHandler(this.ApplyWallpaperOptions);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -234,7 +216,7 @@
             this.exitToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.exitToolStripMenuItem1.Size = new System.Drawing.Size(134, 22);
             this.exitToolStripMenuItem1.Text = "E&xit";
-            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -277,6 +259,22 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.txtFilepath);
+            this.groupBox1.Controls.Add(this.tabControl);
+            this.groupBox1.Controls.Add(this.btnBrowse);
+            this.groupBox1.Location = new System.Drawing.Point(12, 70);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(605, 139);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Wallpaper";
             // 
             // tabControl
             // 
@@ -332,6 +330,17 @@
             this.timeline.TabStop = false;
             this.timeline.Time = 0F;
             // 
+            // cbLooping
+            // 
+            this.cbLooping.AutoSize = true;
+            this.cbLooping.Location = new System.Drawing.Point(0, 0);
+            this.cbLooping.Name = "cbLooping";
+            this.cbLooping.Size = new System.Drawing.Size(69, 17);
+            this.cbLooping.TabIndex = 0;
+            this.cbLooping.Text = "Looping";
+            this.cbLooping.UseVisualStyleBackColor = true;
+            this.cbLooping.CheckedChanged += new System.EventHandler(this.ApplyWallpaperOptions);
+            // 
             // volumeSlider
             // 
             this.volumeSlider.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -378,21 +387,24 @@
             this.btnBackgroundColor.UseVisualStyleBackColor = false;
             this.btnBackgroundColor.Click += new System.EventHandler(this.btnBackgroundColor_Click);
             // 
-            // groupBox1
+            // label3
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.txtFilepath);
-            this.groupBox1.Controls.Add(this.tabControl);
-            this.groupBox1.Controls.Add(this.btnBrowse);
-            this.groupBox1.Location = new System.Drawing.Point(12, 70);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(605, 139);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Wallpaper";
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(-4, 3);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(74, 13);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Image Mode:";
+            // 
+            // cbxImageMode
+            // 
+            this.cbxImageMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxImageMode.FormattingEnabled = true;
+            this.cbxImageMode.Location = new System.Drawing.Point(76, 0);
+            this.cbxImageMode.Name = "cbxImageMode";
+            this.cbxImageMode.Size = new System.Drawing.Size(121, 21);
+            this.cbxImageMode.TabIndex = 8;
+            this.cbxImageMode.SelectionChangeCommitted += new System.EventHandler(this.ApplyWallpaperOptions);
             // 
             // FormMain
             // 
@@ -418,13 +430,13 @@
             this.cmsNotifyIcon.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.tabControl.ResumeLayout(false);
             this.tpVideo.ResumeLayout(false);
             this.tpVideo.PerformLayout();
             this.tpImage.ResumeLayout(false);
             this.tpImage.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -441,7 +453,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ContextMenuStrip cmsNotifyIcon;
-        private System.Windows.Forms.ToolStripMenuItem showHideToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ComboBox cbxImageMode;
@@ -465,6 +476,8 @@
         private System.Windows.Forms.Button btnBackgroundColor;
         private System.Windows.Forms.Button btnPause;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ToolStripMenuItem minimizeToTrayToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
     }
 }
 
