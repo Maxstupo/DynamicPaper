@@ -96,11 +96,17 @@
     <Compile Include="Graphics\Data\VertexArray.cs" />
     <Compile Include="Graphics\Data\VertexBuffer.cs" />
     <Compile Include="Graphics\Data\ElementBuffer.cs" />
+    <Compile Include="Graphics\FrameBuffer.cs" />
     <Compile Include="Graphics\IBindable.cs" />
     <Compile Include="Graphics\Data\VertexBufferLayout.cs" />
     <Compile Include="Graphics\IRenderer.cs" />
+    <Compile Include="Graphics\ShaderToy\IResourceProvider.cs" />
+    <Compile Include="Graphics\ShaderToy\Pass.cs" />
     <Compile Include="Graphics\Shader.cs" />
-    <Compile Include="Graphics\ShaderToyRenderer.cs" />
+    <Compile Include="Graphics\ShaderToy\RenderInput.cs" />
+    <Compile Include="Graphics\ShaderToy\ShaderToyInput.cs" />
+    <Compile Include="Graphics\ShaderToy\ShaderToyRenderer.cs" />
+    <Compile Include="Graphics\ShaderToy\RenderPass.cs" />
     <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -135,7 +141,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Res\Shaders\supernova_remnant.shadertoy.vs">
+    <None Include="Res\Shaders\supernova_remnant.shadertoy.fs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Res\Shaders\tree\buffer_a.fs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Res\Shaders\tree\buffer_b.fs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Res\Shaders\tree\common.fs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Res\Shaders\tree\image.fs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

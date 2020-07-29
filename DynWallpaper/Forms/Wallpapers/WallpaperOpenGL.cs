@@ -43,6 +43,7 @@
 
             glControl_Resize(null, EventArgs.Empty); // Ensure the Viewport is set up correctly
             Application.Idle += Application_Idle;
+            Render();
         }
 
         private void Render() {

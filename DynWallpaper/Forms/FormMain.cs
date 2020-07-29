@@ -10,7 +10,7 @@
     using HeyRed.Mime;
     using LibVLCSharp.Shared;
     using Maxstupo.DynWallpaper.Forms.Wallpapers;
-    using Maxstupo.DynWallpaper.Graphics;
+    using Maxstupo.DynWallpaper.Graphics.ShaderToy;
     using Maxstupo.DynWallpaper.Utility;
     using Microsoft.Win32;
     using Newtonsoft.Json;
@@ -442,8 +442,33 @@
                 return;
             }
 
-            IRenderer renderer = new ShaderToyRenderer("Res/Shaders/supernova_remnant.shadertoy.vs",
-                                                       "Res/Textures/rgba_256_noise.png", "Res/Textures/black.png", "Res/Textures/bw_64_noise.png");
+            ShaderToyRenderer renderer = new ShaderToyRenderer {
+                // SharedFragmentCode = File.ReadAllText("Res/Shaders/tree/common.fs")
+            };
+
+            //renderer.Add(Pass.BufferA, RenderPass.FromFile("Res/Shaders/tree/buffer_a.fs",
+            //    new RenderInput(2, "Res/Textures/bw_64_noise.png"))
+            //);
+
+            //renderer.Add(Pass.BufferB, RenderPass.FromFile("Res/Shaders/tree/buffer_b.fs",
+            //    new RenderInput(0, Pass.BufferB),
+            //    new RenderInput(1, Pass.BufferA),
+            //    new RenderInput(2, "Res/Textures/bw_64_noise.png"),
+            //    new RenderInput(3, "Res/Textures/black.png"))
+            //);
+
+            //renderer.Add(Pass.Image, RenderPass.FromFile("Res/Shaders/tree/image.fs",
+            //    new RenderInput(0, Pass.BufferB),
+            //    new RenderInput(1, Pass.BufferA))
+            //);
+
+            renderer.Add(Pass.Image, RenderPass.FromFile("Res/Shaders/supernova_remnant.shadertoy.fs",
+               new RenderInput(0, "Res/Textures/rgba_256_noise.png"),
+               new RenderInput(1, "Res/Textures/black.png"),
+               new RenderInput(2, "Res/Textures/bw_64_noise.png"))
+           );
+
+
 
             stWallpaper = new WallpaperOpenGL(renderer);
 
@@ -451,7 +476,7 @@
 
             if (!background) {
                 stWallpaper.FormBorderStyle = FormBorderStyle.Sizable;
-                stWallpaper.StartPosition = FormStartPosition.CenterParent;
+                stWallpaper.Size = new Size(800, 450);
                 stWallpaper.ShowDialog(this);
                 stWallpaper.Dispose();
                 stWallpaper = null;

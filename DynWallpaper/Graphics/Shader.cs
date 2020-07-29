@@ -1,5 +1,5 @@
 ﻿namespace Maxstupo.DynWallpaper.Graphics {
-   
+
     using System;
     using System.Collections.Generic;
     using OpenTK;
@@ -7,13 +7,20 @@
 
     public sealed class Shader : IBindable {
 
+        public string Name { get; }
+
         public int Id { get; }
 
         public bool IsDisposed { get; private set; }
 
         private readonly Dictionary<string, int> cachedUniformLocations = new Dictionary<string, int>();
 
-        public Shader(string vertexSource, string fragmentSource) {
+        private readonly string fragmentSource;
+
+        public Shader(string name, string vertexSource, string fragmentSource) {
+            this.Name = name;
+            this.fragmentSource = fragmentSource;
+
             /* Compile our shaders. */
             int vertexShaderId = CompileShader(ShaderType.VertexShader, vertexSource);
             int fragmentShaderId = CompileShader(ShaderType.FragmentShader, fragmentSource);
@@ -28,7 +35,7 @@
             GL.GetProgram(Id, GetProgramParameterName.LinkStatus, out int value);
             if (value == 0) {
                 string infoLog = GL.GetProgramInfoLog(Id);
-                Console.WriteLine($"SHADER - LINKING_FAILED\n{infoLog}");
+                Console.WriteLine($"SHADER {name} - LINKING_FAILED\n{infoLog}");
             }
 
             /* Detach and delete our shaders, as we no longer need them. */
@@ -50,7 +57,7 @@
             GL.GetShader(id, ShaderParameter.CompileStatus, out int value);
             if (value == 0) {
                 string infoLog = GL.GetShaderInfoLog(id);
-                Console.WriteLine($"{type} - COMPILATION_FAILED\n{infoLog}");
+                Console.WriteLine($"{type} - COMPILATION_FAILED {Name}\n{infoLog}");
             }
 
             return id;
