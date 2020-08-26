@@ -1,6 +1,12 @@
 # DynWallpaper
 DynWallpaper provides support for desktop wallpapers that aren't just images. Currently video & image wallpapers are supported, with the ability to have separate wallpapers for each display.
 
+## Features
+* Video Wallpapers
+* [ShaderToy](https://www.shadertoy.com/) Wallpapers
+* Multi-monitor support
+
+
 ## Releases
 TBD
 
