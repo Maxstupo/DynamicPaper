@@ -45,11 +45,11 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsslTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.groupBox1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // fileToolStripMenuItem
@@ -252,17 +252,17 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Monitor";
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.helpToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(688, 24);
-            this.menuStrip1.TabIndex = 6;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(688, 24);
+            this.menuStrip.TabIndex = 6;
+            this.menuStrip.Text = "menuStrip1";
             // 
             // FormMain
             // 
@@ -271,11 +271,11 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.ClientSize = new System.Drawing.Size(688, 362);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lbxPlaylist);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(385, 254);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -285,8 +285,8 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,7 +312,7 @@ namespace Maxstupo.DynamicPaper.Forms {
         private System.Windows.Forms.Button btnLoop;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnPlayPause;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip;
         private Controls.TimelineSlider timelineSlider;
         private Controls.VolumeSlider volumeSlider;
     }

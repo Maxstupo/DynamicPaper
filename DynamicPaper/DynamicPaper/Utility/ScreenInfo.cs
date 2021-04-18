@@ -1,11 +1,18 @@
 ﻿namespace Maxstupo.DynamicPaper.Utility {
 
     using System;
+    using System.Linq;
     using System.Windows.Forms;
     using Maxstupo.DynamicPaper.Utility.Windows;
 
     public sealed class ScreenInfo {
 
+        public static ScreenInfo[] AllScreens {
+            get {
+                int index = 0;
+                return Screen.AllScreens.Select(x => new ScreenInfo(x, index++)).ToArray();
+            }
+        }
 
         public Screen Screen { get; }
 

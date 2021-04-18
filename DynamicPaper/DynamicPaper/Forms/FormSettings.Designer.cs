@@ -14,6 +14,8 @@
             if (disposing && (components != null)) {
                 components.Dispose();
             }
+            if (disposing)
+                OnDispose();
             base.Dispose(disposing);
         }
 
@@ -49,6 +51,7 @@
             this.btnOkay.TabIndex = 0;
             this.btnOkay.Text = "&OK";
             this.btnOkay.UseVisualStyleBackColor = true;
+            this.btnOkay.Click += new System.EventHandler(this.btnOkay_Click);
             // 
             // btnCancel
             // 
@@ -165,12 +168,13 @@
             // 
             this.linkRestoreDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkRestoreDefaults.AutoSize = true;
-            this.linkRestoreDefaults.Location = new System.Drawing.Point(12, 262);
+            this.linkRestoreDefaults.Location = new System.Drawing.Point(22, 262);
             this.linkRestoreDefaults.Name = "linkRestoreDefaults";
             this.linkRestoreDefaults.Size = new System.Drawing.Size(130, 13);
             this.linkRestoreDefaults.TabIndex = 4;
             this.linkRestoreDefaults.TabStop = true;
             this.linkRestoreDefaults.Text = "Restore default settings";
+            this.linkRestoreDefaults.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkRestoreDefaults_LinkClicked);
             // 
             // FormSettings
             // 

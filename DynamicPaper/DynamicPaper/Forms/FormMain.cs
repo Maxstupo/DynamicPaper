@@ -1,13 +1,8 @@
 ﻿namespace Maxstupo.DynamicPaper.Forms {
 
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Data;
-    using System.Drawing;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
     using Maxstupo.DynamicPaper.Utility;
 
@@ -23,18 +18,22 @@
 
         private ScreenInfo[] monitors;
 
+        private readonly SettingsManager<AppSettings> settingsManager = new SettingsManager<AppSettings>("settings.json", () => new AppSettings());
+
         public FormMain() {
             InitializeComponent();
         }
 
         private void FormMain_Load(object sender, EventArgs e) {
+            settingsManager.Load(true);
+
             RefreshMonitorList();
+
         }
 
 
         public void RefreshMonitorList() {
-            int index = 0;
-            monitors = Screen.AllScreens.Select(x => new ScreenInfo(x, index++)).ToArray();
+            monitors = ScreenInfo.AllScreens;
 
             cbxMonitor.DataSource = null;
             cbxMonitor.DisplayMember = nameof(ScreenInfo.DisplayName);
@@ -42,16 +41,16 @@
         }
 
         public void ShowSettingsDialog(bool useParent = true) {
-            using (FormSettings dialog = new FormSettings()) {
-                
+
+            using (FormSettings dialog = new FormSettings(settingsManager)) {
+
                 if (!useParent)
                     dialog.StartPosition = FormStartPosition.CenterScreen;
 
-                if (dialog.ShowDialog(useParent ? this : null) == DialogResult.OK) {
-
-                }
-
+                dialog.ShowDialog(useParent ? this : null);
             }
+
+
         }
 
 
