@@ -28,6 +28,9 @@
         private string settingsSnapshot;
 
 
+        public event EventHandler<T> OnSettingsChanged;
+
+
         public SettingsManager(string filename, Func<T> settingsFactory) {
             this.Filename = filename;
 
@@ -45,6 +48,7 @@
 
         public SettingsManager<T> RestoreDefaults() {
             Settings.RestoreDefaults();
+            OnSettingsChanged?.Invoke(this, Settings);
             return this;
         }
 
@@ -68,6 +72,8 @@
 
             Settings = JsonConvert.DeserializeObject<T>(json);
 
+            OnSettingsChanged?.Invoke(this, Settings);
+
             return true;
         }
 
@@ -78,6 +84,9 @@
             if (settingsSnapshot != null)
                 Settings = JsonConvert.DeserializeObject<T>(settingsSnapshot);
             settingsSnapshot = null;
+
+            OnSettingsChanged?.Invoke(this, Settings);
+
             return this;
         }
 

@@ -24,6 +24,8 @@ namespace Maxstupo.DynamicPaper.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,10 +48,18 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.tsslTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.cmsNotifyIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.traySettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.trayExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.menuStrip.SuspendLayout();
+            this.cmsNotifyIcon.SuspendLayout();
             this.SuspendLayout();
             // 
             // fileToolStripMenuItem
@@ -89,6 +99,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -264,6 +275,54 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.menuStrip.TabIndex = 6;
             this.menuStrip.Text = "menuStrip1";
             // 
+            // notifyIcon
+            // 
+            this.notifyIcon.ContextMenuStrip = this.cmsNotifyIcon;
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "DynamicPaper";
+            this.notifyIcon.Visible = true;
+            // 
+            // cmsNotifyIcon
+            // 
+            this.cmsNotifyIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.traySettingsToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.trayExitToolStripMenuItem});
+            this.cmsNotifyIcon.Name = "cmsNotifyIcon";
+            this.cmsNotifyIcon.Size = new System.Drawing.Size(117, 82);
+            // 
+            // showToolStripMenuItem
+            // 
+            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.showToolStripMenuItem.Text = "Show";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(113, 6);
+            // 
+            // traySettingsToolStripMenuItem
+            // 
+            this.traySettingsToolStripMenuItem.Name = "traySettingsToolStripMenuItem";
+            this.traySettingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.traySettingsToolStripMenuItem.Text = "Settings";
+            this.traySettingsToolStripMenuItem.Click += new System.EventHandler(this.traySettingsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(113, 6);
+            // 
+            // trayExitToolStripMenuItem
+            // 
+            this.trayExitToolStripMenuItem.Name = "trayExitToolStripMenuItem";
+            this.trayExitToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.trayExitToolStripMenuItem.Text = "Exit";
+            this.trayExitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -275,11 +334,14 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lbxPlaylist);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(385, 254);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DynamicPaper";
+            this.TrayIcon = this.notifyIcon;
+            this.OnTrayEntered += new System.EventHandler(this.FormMain_OnTrayEntered);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.groupBox1.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
@@ -287,6 +349,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.groupBox2.ResumeLayout(false);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
+            this.cmsNotifyIcon.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -315,6 +378,13 @@ namespace Maxstupo.DynamicPaper.Forms {
         private System.Windows.Forms.MenuStrip menuStrip;
         private Controls.TimelineSlider timelineSlider;
         private Controls.VolumeSlider volumeSlider;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
+        private System.Windows.Forms.ContextMenuStrip cmsNotifyIcon;
+        private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem traySettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem trayExitToolStripMenuItem;
     }
 }
 
