@@ -1,8 +1,8 @@
-﻿namespace Maxstupo.DynWallpaper {
+﻿namespace Maxstupo.DynamicPaper {
 
     using System;
     using System.Windows.Forms;
-    using Maxstupo.DynWallpaper.Forms;
+    using Maxstupo.DynamicPaper.Forms;
 
     static class Program {
 
@@ -11,11 +11,9 @@
         /// </summary>
         [STAThread]
         static void Main() {
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormMain());
-
         }
 
     }
