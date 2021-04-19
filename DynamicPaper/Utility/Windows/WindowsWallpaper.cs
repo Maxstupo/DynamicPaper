@@ -1,11 +1,13 @@
 ﻿namespace Maxstupo.DynamicPaper.Utility.Windows {
 
     using System;
+    using System.Diagnostics;
     using System.Drawing;
     using System.Windows.Forms;
     using Microsoft.Win32;
 
     public static class WindowsWallpaper {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private static IntPtr workerw;
 
@@ -59,6 +61,8 @@
                 RegistryKey rkDesktop = rkControlPanel.OpenSubKey("Desktop");
 
                 string path = Convert.ToString(rkDesktop.GetValue("Wallpaper"));
+
+                Logger.Trace("Reseting desktop background...");
 
                 return NativeMethods.SystemParametersInfo(SPI.SETDESKWALLPAPER, 0, path, SPIF.SENDCHANGE) != 0;
 

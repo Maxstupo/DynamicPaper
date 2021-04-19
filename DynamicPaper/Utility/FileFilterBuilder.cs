@@ -33,6 +33,8 @@
     public sealed class FileFilterBuilder {
         private readonly List<FileFilterItem> items = new List<FileFilterItem>();
 
+        public HashSet<string> Extensions => items.SelectMany(x => x.Extensions).Where(x => x != "*").Select(x => $".{x}").ToHashSet();
+
         public FileFilterBuilder Add(string description, params string[] extensions) {
             items.Add(new FileFilterItem(description, extensions));
             return this;

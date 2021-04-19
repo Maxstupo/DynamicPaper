@@ -8,6 +8,7 @@
     using System.Windows.Forms;
 
     public class TrayAwareForm : Form {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected FormWindowState PrevWindowState { get; private set; }
         protected FormWindowState ResumeWindowState { get; private set; }
@@ -66,12 +67,13 @@
         }
 
         private void TrayAwareForm_Resize(object sender, EventArgs e) {
-            Debug.WriteLine($"{PrevWindowState} -> {WindowState}");
-
+        
             if (MinimizeToTray && PrevWindowState != WindowState && WindowState == FormWindowState.Minimized)
                 ToTray();
 
             if (PrevWindowState != WindowState) {
+                Logger.Trace("State changed: {0} -> {1}", PrevWindowState, WindowState);
+
                 if (WindowState == FormWindowState.Minimized) {
                     OnFormHidden?.Invoke(this, EventArgs.Empty);
                 } else if (PrevWindowState == FormWindowState.Minimized) {

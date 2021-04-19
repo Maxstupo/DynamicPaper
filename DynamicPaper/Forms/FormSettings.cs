@@ -4,6 +4,7 @@
     using Maxstupo.DynamicPaper.Utility;
 
     public partial class FormSettings : Form {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly SettingsManager<AppSettings> settingsManager;
         private readonly BindingSource bindingSource;

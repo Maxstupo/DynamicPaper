@@ -25,17 +25,27 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>DynamicPaper.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,7 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\DoubleBufferedListBox.cs">
+    <Compile Include="Controls\CyclingButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\HighlightListbox.cs" />
+    <Compile Include="Controls\PlayerButtons.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\TimelineSlider.cs">
@@ -93,6 +107,12 @@
     <Compile Include="Utility\Windows\SPIF.cs" />
     <Compile Include="Utility\Windows\WindowsUtility.cs" />
     <Compile Include="Utility\Windows\WindowsWallpaper.cs" />
+    <Compile Include="Wallpaper\Players\IPlaylistPlayer.cs" />
+    <Compile Include="Wallpaper\MediaPlayerStore.cs" />
+    <Compile Include="Wallpaper\Playlist.cs" />
+    <Compile Include="Wallpaper\PlaylistItem.cs" />
+    <Compile Include="Wallpaper\Players\VlcMediaPlayer.cs" />
+    <Compile Include="Wallpaper\Players\PlaylistPlayer.cs" />
     <EmbeddedResource Include="Controls\TimelineSlider.resx">
       <DependentUpon>TimelineSlider.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,6 +132,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -132,8 +158,14 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.7.9</Version>
+    </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.Windows">
       <Version>3.0.12</Version>
+    </PackageReference>
+    <PackageReference Include="WindowsAPICodePack-Shell">
+      <Version>1.1.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

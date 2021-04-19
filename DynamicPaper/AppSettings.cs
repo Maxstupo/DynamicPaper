@@ -1,6 +1,7 @@
 ﻿namespace Maxstupo.DynamicPaper {
-
+    using System.Collections.Generic;
     using Maxstupo.DynamicPaper.Utility;
+    using Maxstupo.DynamicPaper.Wallpaper;
     using Newtonsoft.Json;
 
     public class AppSettings : ISettings {
@@ -16,6 +17,7 @@
 
             RestorePlaying = false;
             RestorePlaylists = false;
+            ShowTimeLeft = true;
         }
 
         [JsonProperty("check_for_updates")] public bool CheckForUpdates { get; set; }
@@ -34,6 +36,15 @@
 
         [JsonProperty("restore_playlists")] public bool RestorePlaylists { get; set; }
 
+        [JsonProperty("show_time_remaining")]
+        public bool ShowTimeLeft { get; set; }
+
+        [JsonProperty("playlists")]
+        public Dictionary<int, Playlist> Playlists { get; } = new Dictionary<int, Playlist>();
+
+
     }
+
+
 
 }
