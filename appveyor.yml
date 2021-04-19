@@ -48,12 +48,12 @@ for:
   configuration: Debug
   after_build:
   - cmd: >-
-    mkdir "DynamicPaper_v%APPVEYOR_BUILD_VERSION%"
-    
-    xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\Debug" "DynamicPaper_v%APPVEYOR_BUILD_VERSION%" /E /C
-    
-    7z a "DynamicPaper_v%APPVEYOR_BUILD_VERSION%.zip" "DynamicPaper_v%APPVEYOR_BUILD_VERSION%_Debug"
-    
+      mkdir "DynamicPaper_v%APPVEYOR_BUILD_VERSION%"
+
+      xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\Debug" "DynamicPaper_v%APPVEYOR_BUILD_VERSION%" /E /C
+
+      7z a "DynamicPaper_v%APPVEYOR_BUILD_VERSION%_Debug.zip" "DynamicPaper_v%APPVEYOR_BUILD_VERSION%"
+
   artifacts:
   - path: DynamicPaper_v$(APPVEYOR_BUILD_VERSION)_Debug.zip
     name: DynamicPaper_Debug
