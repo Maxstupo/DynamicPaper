@@ -55,8 +55,8 @@ for:
 
       xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\%CONFIGURATION%" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%" /E /C
 
-      7z a "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%.zip" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
+      7z a "DynamicPaper.zip" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
 
   artifacts:
-  - path: DynamicPaper_$(CONFIGURATION)_v$(APPVEYOR_BUILD_VERSION).zip
-    name: $(CONFIGURATION)
+  - path: DynamicPaper.zip
+    name: $(CONFIGURATION)_Build
