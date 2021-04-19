@@ -36,7 +36,8 @@ DynamicPaper is a Microsoft Windows wallpaper app, that supports media formats t
   * TBD
 
 ## Releases
-You can find both the latest and previous releases of DynamicPaper on the [releases page](https://github.com/Maxstupo/DynamicPaper/releases).
+
+**Stable releases of DynamicPaper are on the [releases page](https://github.com/Maxstupo/DynamicPaper/releases).**
 
 #### Development Builds
 The latest development build of DynamicPaper is provided by AppVeyor. View the latest build status [here](https://ci.appveyor.com/project/Maxstupo/DynamicPaper).
