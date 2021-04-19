@@ -7,16 +7,23 @@
 
     public abstract class CyclingButton<T> : Button where T : Enum {
 
-        protected readonly T[] Values = Enum.GetValues(typeof(T)).Cast<T>().ToArray();
+        protected static readonly T[] Values = Enum.GetValues(typeof(T)).Cast<T>().ToArray();
 
-        public int ValueIndex { get; set; } = 0;
+        public int ValueIndex { get; private set; } = 0;
 
-        public T CurrentValue => Values[ValueIndex];
+        public T Value {
+            get => Values[ValueIndex];
+            set {
+                ValueIndex = GetIndex(value);
+                UpdateDisplay();
+            }
+        }
 
         public CyclingButton() {
             Click += CyclingButton_Click;
             UpdateDisplay();
         }
+
 
         public virtual string GetDisplayName(T value) {
             return value.ToString();
@@ -27,13 +34,21 @@
         }
 
         protected void UpdateDisplay() {
-            Text = GetDisplayName(CurrentValue);
-            Image = GetDisplayImage(CurrentValue);
+            Text = GetDisplayName(Value);
+            Image = GetDisplayImage(Value);
         }
 
         private void CyclingButton_Click(object sender, EventArgs e) {
             ValueIndex = ++ValueIndex % Values.Length;
             UpdateDisplay();
+        }
+
+        public int GetIndex(T value) {
+            for (int i = 0; i < Values.Length; i++) {
+                if (Values[i].Equals(value))
+                    return i;
+            }
+            return -1;
         }
 
     }
