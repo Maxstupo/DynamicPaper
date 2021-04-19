@@ -39,7 +39,7 @@ DynamicPaper is a Microsoft Windows wallpaper app, that supports media formats t
 You can find both the latest and previous releases of DynamicPaper on the [releases page](https://github.com/Maxstupo/DynamicPaper/releases).
 
 #### Development Builds
-The latest development build of YDL-UI can be found on the [artifacts](https://ci.appveyor.com/) page of DynamicPaper's AppVeyor.
+The latest development build of YDL-UI can be found on the [artifacts](https://ci.appveyor.com/project/Maxstupo/DynamicPaper/build/artifacts) page of DynamicPaper's AppVeyor.
 Note: These builds are temporary and may be unstable as they are built from the [development branch](https://github.com/Maxstupo/DynamicPaper/tree/develop) for every commit automatically.
 
 ## Installation & Setup
