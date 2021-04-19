@@ -1,0 +1,46 @@
+version: 1.0.0.{build}
+image: Visual Studio 2019
+
+skip_commits:
+  files:
+    - README.md
+
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+
+before_build:
+- cmd: nuget restore
+
+build:
+  project: DynamicPaper/DynamicPaper.csproj
+  verbosity: minimal
+  
+test: off
+deploy: off
+
+
+# override common config
+for:
+
+# config for master branch
+#
+-
+  branches:
+    only:
+      - master
+
+  configuration: Release
+
+# config for develop branch
+#
+-
+  branches:
+    only:
+      - develop
+    
+  configuration: Debug
+   
