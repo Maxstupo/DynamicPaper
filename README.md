@@ -40,7 +40,7 @@ You can find both the latest and previous releases of DynamicPaper on the [relea
 
 #### Development Builds
 The latest development build of DynamicPaper is provided by AppVeyor. View the latest build status [here](https://ci.appveyor.com/project/Maxstupo/DynamicPaper).
-<br/><br>
+<br/>
 #### Latest build downloads:
 - [Zipped Build - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Debug)
 - [Zipped Build - Release](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Release)
