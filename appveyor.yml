@@ -57,8 +57,6 @@ for:
 
       7z a "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%.zip" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
 
-      rmdir "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
-
   artifacts:
   - path: DynamicPaper_$(CONFIGURATION)_v$(APPVEYOR_BUILD_VERSION).zip
     name: $(CONFIGURATION)
