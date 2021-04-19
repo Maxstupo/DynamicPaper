@@ -16,7 +16,7 @@
     }
 
 
-    public class PlaylistPlayer : IPlaylistPlayer {
+    public sealed class PlaylistPlayer : IPlaylistPlayer {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly Screen screen;

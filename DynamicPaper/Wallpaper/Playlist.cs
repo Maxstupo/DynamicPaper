@@ -3,7 +3,7 @@
     using System.Collections;
     using System.Collections.Generic;
 
-    public class Playlist : IEnumerable<PlaylistItem> {
+    public sealed class Playlist : IEnumerable<PlaylistItem> {
 
         private readonly List<PlaylistItem> items = new List<PlaylistItem>();
         public IReadOnlyList<PlaylistItem> Items => items.AsReadOnly();

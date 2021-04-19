@@ -4,7 +4,7 @@
     using Maxstupo.DynamicPaper.Controls;
     using Newtonsoft.Json;
 
-    public class PlaylistItem {
+    public sealed class PlaylistItem {
 
         public string Filepath { get; }
 

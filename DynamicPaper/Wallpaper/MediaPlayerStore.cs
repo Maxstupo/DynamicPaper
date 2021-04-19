@@ -6,7 +6,7 @@
     using HeyRed.Mime;
     using Maxstupo.DynamicPaper.Wallpaper.Players;
 
-    public class MediaPlayerStore {
+    public sealed class MediaPlayerStore {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private static MediaPlayerStore instance;
