@@ -16,7 +16,7 @@ before_build:
 - cmd: nuget restore
 
 build:
-  project: DynamicPaper.sln
+  project: DynamicPaper/DynamicPaper.csproj
   verbosity: minimal
   
 test: off
