@@ -6,7 +6,7 @@
     using LibVLCSharp.WinForms;
     using Maxstupo.DynamicPaper.Utility.Windows;
 
-    public class VlcMediaPlayer : IAttachablePlayer {
+    public sealed class VlcMediaPlayer : IAttachablePlayer {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static readonly LibVLC LibVLC = new LibVLC();
@@ -32,13 +32,14 @@
         public void Attach(Screen screen) {
             if (IsAttached)
                 return;
+            Logger.Trace("Attach vlc player...");
 
             vlcPlayer = new MediaPlayer(LibVLC) { EnableHardwareDecoding = true };
             vlcPlayer.EndReached += VlcPlayer_EndReached;
             vlcPlayer.Paused += VlcPlayer_Change;
             vlcPlayer.Playing += VlcPlayer_Change;
             vlcPlayer.PositionChanged += VlcPlayer_PositionChanged;
-
+        
             view = new VideoView { MediaPlayer = vlcPlayer };
 
             view.Show();
@@ -81,7 +82,7 @@
 
         public void Play(PlaylistItem item = null) {
             Media media = item != PlayingMedia && item != null ? new Media(LibVLC, item.Filepath, FromType.FromPath) : vlcPlayer.Media;
-
+           
             if (vlcPlayer.Play(media)) {
                 if (PlayingMedia != null && item != null)
                     PlayingMedia.IsPlaying = false;
@@ -95,12 +96,13 @@
             }
         }
 
-        public void Pause() {
+          public void Pause() {
             if (IsAttached)
                 vlcPlayer.Pause();
         }
 
         public void Stop() {
+            PlayingMedia = null;
             Detach(true);
         }
 

@@ -162,7 +162,6 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.lbxPlaylist.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.lbxPlaylist.Size = new System.Drawing.Size(664, 175);
             this.lbxPlaylist.TabIndex = 2;
-            this.lbxPlaylist.SelectedIndexChanged += new System.EventHandler(this.lbxPlaylist_SelectedIndexChanged);
             this.lbxPlaylist.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbxPlaylist_DragDrop);
             this.lbxPlaylist.DragEnter += new System.Windows.Forms.DragEventHandler(this.lbxPlaylist_DragEnter);
             this.lbxPlaylist.DragOver += new System.Windows.Forms.DragEventHandler(this.lbxPlaylist_DragOver);
@@ -244,7 +243,6 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.btnShuffle.TabIndex = 1;
             this.btnShuffle.Text = "No Shuffle";
             this.btnShuffle.UseVisualStyleBackColor = true;
-            this.btnShuffle.ValueIndex = 0;
             this.btnShuffle.Click += new System.EventHandler(this.btnShuffle_Click);
             // 
             // btnLoop
@@ -255,7 +253,6 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.btnLoop.TabIndex = 0;
             this.btnLoop.Text = "No Loop";
             this.btnLoop.UseVisualStyleBackColor = true;
-            this.btnLoop.ValueIndex = 0;
             this.btnLoop.Click += new System.EventHandler(this.btnLoop_Click);
             // 
             // statusStrip

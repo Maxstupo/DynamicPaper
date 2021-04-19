@@ -43,7 +43,7 @@
         private bool willDrag = false;
         private bool hasDragged = false;
 
-
+        // TODO: Add pipe server for program mutex.
         public FormMain() {
             if (!DesignMode) {
                 Logger.Debug("Initializing LibVLC...");
@@ -77,7 +77,7 @@
         private void FormMain_Load(object sender, EventArgs e) {
             RefreshMonitorList();
             RefreshEnabled();
-            UpdateTimeStatus(0);
+            UpdateStatusBar(0);
 
             if (Settings.StartMinimized && Settings.MinimizeToTray)
                 Visible = false;
@@ -98,8 +98,16 @@
             WindowsWallpaper.ResetDesktopBackground();
         }
 
+        private IPlaylistPlayer GetPlayer(ScreenInfo info) {
+            if (players.TryGetValue(info, out IPlaylistPlayer player))
+                return player;
 
-        #region Refresh Methods
+            player = new PlaylistPlayer(info.Screen);
+            players[info] = player;
+            return player;
+        }
+
+        #region Refresh/Update Methods
 
         public void RefreshMonitorList() {
             monitors = ScreenInfo.AllScreens;
@@ -137,9 +145,19 @@
                 lbxPlaylist.Items.Add(item);
         }
 
+        private void UpdateStatusBar(float newTime) {
+            if (CurrentPlayer == null)
+                return;
+            TimeSpan current = TimeSpan.FromMilliseconds(CurrentPlayer.Duration.TotalMilliseconds * newTime);
+            tsslTime.Text = Settings.ShowTimeLeft ? $"-{CurrentPlayer.Duration - current:hh':'mm':'ss} / {CurrentPlayer.Duration:hh':'mm':'ss}" : $"{current:hh':'mm':'ss} / {CurrentPlayer.Duration:hh':'mm':'ss}";
+
+            tsslCurrentTrack.Text = CurrentPlayer.PlayingMedia?.Filepath ?? string.Empty;
+        }
+
+
         #endregion
 
-        #region Show Dialogs Methods
+        #region Show Dialog Methods
 
         public void ShowSettingsDialog(bool useParent = true) {
 
@@ -221,15 +239,6 @@
             CurrentPlayer.Playlist.Add(item, notifyChange);
         }
 
-        private IPlaylistPlayer GetPlayer(ScreenInfo info) {
-            if (players.TryGetValue(info, out IPlaylistPlayer player))
-                return player;
-
-            player = new PlaylistPlayer(info.Screen);
-            players[info] = player;
-            return player;
-        }
-
         private void CurrentScreenSelectionChanged() {
             if (CurrentPlayer != null) { // Remove hooks for previous player.
                 CurrentPlayer.OnChanged -= CurrentPlayer_OnChange;
@@ -241,18 +250,12 @@
             if (CurrentPlayer != null) { // Add hooks for current player.
                 CurrentPlayer.OnChanged += CurrentPlayer_OnChange;
                 CurrentPlayer.OnPositionChanged += CurrentPlayer_OnPositionChanged;
+
+                btnLoop.Value = CurrentPlayer.LoopMode;
+                btnShuffle.Value = CurrentPlayer.ShuffleMode;
             }
         }
-
-
-        private void UpdateTimeStatus(float newTime) {
-            if (CurrentPlayer == null)
-                return;
-            TimeSpan current = TimeSpan.FromMilliseconds(CurrentPlayer.Duration.TotalMilliseconds * newTime);
-            tsslTime.Text = Settings.ShowTimeLeft ? $"-{CurrentPlayer.Duration - current:hh':'mm':'ss} / {CurrentPlayer.Duration:hh':'mm':'ss}" : $"{current:hh':'mm':'ss} / {CurrentPlayer.Duration:hh':'mm':'ss}";
-        }
-
-
+   
         #region Events
 
         private void CurrentPlayer_OnPositionChanged(object sender, float time) {
@@ -262,7 +265,7 @@
                 timelineSlider.DisableNotify = true;
                 timelineSlider.Time = time;
                 timelineSlider.DisableNotify = false;
-                UpdateTimeStatus(time);
+                UpdateStatusBar(time);
             };
 
             if (InvokeRequired) {
@@ -322,6 +325,8 @@
 
         #endregion
 
+        #region Player Control Events
+
         private void btnPlayPause_Click(object sender, EventArgs e) {
             if (CurrentPlayer == null)
                 return;
@@ -352,16 +357,18 @@
         private void btnLoop_Click(object sender, EventArgs e) {
             if (CurrentPlayer == null)
                 return;
-            CurrentPlayer.LoopMode = btnLoop.CurrentValue;
+            CurrentPlayer.LoopMode = btnLoop.Value;
         }
 
         private void btnShuffle_Click(object sender, EventArgs e) {
             if (CurrentPlayer == null)
                 return;
-            CurrentPlayer.ShuffleMode = btnShuffle.CurrentValue;
+            CurrentPlayer.ShuffleMode = btnShuffle.Value;
         }
 
+        #endregion
 
+        #region Playlist Drag & Drop
 
         private void lbxPlaylist_DragDrop(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
@@ -393,6 +400,31 @@
             }
         }
 
+        private void lbxPlaylist_DragOver(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(typeof(List<PlaylistItem>)))
+                e.Effect = DragDropEffects.Move;
+        }
+
+        private void lbxPlaylist_DragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+        }
+
+        private void lbxPlaylist_MouseUp(object sender, MouseEventArgs e) {
+            willDrag = false;
+            hasDragged = false;
+        }
+
+        private void lbxPlaylist_MouseMove(object sender, MouseEventArgs e) {
+            if (willDrag && !hasDragged) {
+                lbxPlaylist.DoDragDrop(lbxPlaylist.SelectedItems.Cast<PlaylistItem>().ToList(), DragDropEffects.Move);
+                hasDragged = true;
+                willDrag = false;
+            }
+        }
+
+        #endregion
+
         private void lbxPlaylist_MouseDown(object sender, MouseEventArgs e) {
             int index = lbxPlaylist.IndexFromPoint(e.Location);
 
@@ -411,42 +443,17 @@
                 }
             }
 
-            if (e.Button == MouseButtons.Right) {
+            if (e.Button == MouseButtons.Right) 
                 cmsPlaylist.Show(lbxPlaylist.PointToScreen(e.Location));
-            }
-
         }
-        private void lbxPlaylist_MouseUp(object sender, MouseEventArgs e) {
-            willDrag = false;
-            hasDragged = false;
-        }
-
-        private void lbxPlaylist_MouseMove(object sender, MouseEventArgs e) {
-            if (willDrag && !hasDragged) {
-                lbxPlaylist.DoDragDrop(lbxPlaylist.SelectedItems.Cast<PlaylistItem>().ToList(), DragDropEffects.Move);
-                hasDragged = true;
-                willDrag = false;
-            }
-        }
-
-        private void lbxPlaylist_DragOver(object sender, DragEventArgs e) {
-            if (e.Data.GetDataPresent(typeof(List<PlaylistItem>)))
-                e.Effect = DragDropEffects.Move;
-        }
-
-        private void lbxPlaylist_DragEnter(object sender, DragEventArgs e) {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.Copy;
-        }
-
+      
         private void lbxPlaylist_MouseDoubleClick(object sender, MouseEventArgs e) {
             if (lbxPlaylist.SelectedItem != null)
                 playToolStripMenuItem.PerformClick();
         }
 
-        private void lbxPlaylist_SelectedIndexChanged(object sender, EventArgs e) {
-            //   RefreshEnabled();
-        }
+
+        #region Context Menu Strip for Playlist Events
 
         private void playToolStripMenuItem_Click(object sender, EventArgs e) {
             if (CurrentPlayer != null)
@@ -477,7 +484,7 @@
             if (CurrentPlayer == null)
                 return;
 
-            foreach (PlaylistItem item in lbxPlaylist.SelectedItems.Cast<PlaylistItem>())
+            foreach (PlaylistItem item in lbxPlaylist.SelectedItems.Cast<PlaylistItem>().ToList())
                 CurrentPlayer.Playlist.Remove(item);
         }
 
@@ -507,8 +514,10 @@
         private void tsslTime_Click(object sender, EventArgs e) {
             Settings.ShowTimeLeft = !Settings.ShowTimeLeft;
             settingsManager.Save();
-            UpdateTimeStatus(CurrentPlayer?.Position ?? 0);
+            UpdateStatusBar(CurrentPlayer?.Position ?? 0);
         }
+
+        #endregion
 
     }
 

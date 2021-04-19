@@ -71,7 +71,7 @@
                 player.OnPositionChanged += Player_OnPositionChanged; ;
             }
 
-            player.Attach(screen);
+            player?.Attach(screen);
             player?.Play(item);
         }
 
