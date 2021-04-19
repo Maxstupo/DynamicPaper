@@ -19,6 +19,9 @@ build:
   project: DynamicPaper/DynamicPaper.csproj
   verbosity: minimal
   
+cache:
+  - '%USERPROFILE%\.nuget\packages -> **.sln, **.csproj'  # preserve nuget folder (packages) unless the solution or projects change
+  
 test: off
 deploy: off
 
@@ -43,4 +46,14 @@ for:
       - develop
     
   configuration: Debug
-   
+  after_build:
+  - cmd: >-
+    mkdir "DynamicPaper_v%APPVEYOR_BUILD_VERSION%"
+    
+    xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\Debug" "DynamicPaper_v%APPVEYOR_BUILD_VERSION%" /E /C
+    
+    7z a "DynamicPaper_v%APPVEYOR_BUILD_VERSION%.zip" "DynamicPaper_v%APPVEYOR_BUILD_VERSION%_Debug"
+    
+  artifacts:
+  - path: DynamicPaper_v$(APPVEYOR_BUILD_VERSION)_Debug.zip
+    name: DynamicPaper_Debug
