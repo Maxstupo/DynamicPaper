@@ -24,7 +24,18 @@ cache:
   
 test: off
 deploy: off
+    
+after_build:
+  - cmd: >-
+      mkdir "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
 
+      xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\%CONFIGURATION%" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%" /E /C
+
+      7z a "DynamicPaper.zip" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
+ 
+      set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 6"
+   
+      iscc dynamicpaper-installer.iss /DConfiguration=%CONFIGURATION%
 
 # override common config
 for:
@@ -38,25 +49,29 @@ for:
 
   configuration: Release
 
+  deploy:
+    description: 'DynamicPaper Installer'
+    artifact: /.*\.exe/
+    auth_token:
+      secure: FvYSkn+t71h71KQJ3v63HzNcxv7Hv9rpqQiQ/Zdly9h87M3VmB2WexbixZg1EDIq
+    draft: true
+    provider: GitHub
+    on:
+      appveyor_repo_tag: true
+
 # config for develop branch
 #
 -
   branches:
     only:
       - develop
-    
+
   configuration:
     - Debug
     - Release
-    
-  after_build:
-  - cmd: >-
-      mkdir "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
-
-      xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\%CONFIGURATION%" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%" /E /C
-
-      7z a "DynamicPaper.zip" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
 
   artifacts:
   - path: DynamicPaper.zip
     name: $(CONFIGURATION)_Build
+  - path: /DynamicPaper-Setup_*\.exe/
+    name: $(CONFIGURATION)-Setup_Build
