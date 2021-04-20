@@ -45,8 +45,8 @@ The latest development build of DynamicPaper is provided by AppVeyor. View the l
 #### Latest build downloads:
 - [Zipped Build - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Debug)
 - [Zipped Build - Release](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Release)
-- [Installer - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper-Setup.zip?branch=develop&job=Configuration%3A+Debug)
-- [Installer - Release](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper-Setup.zip?branch=develop&job=Configuration%3A+Release)
+- [Installer - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper-Setup.exe?branch=develop&job=Configuration%3A+Debug)
+- [Installer - Release](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper-Setup.exe?branch=develop&job=Configuration%3A+Release)
 
 Note: These builds are temporary and may be unstable as they are built from the [development branch](https://github.com/Maxstupo/DynamicPaper/tree/develop) for every commit automatically.
 
