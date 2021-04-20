@@ -26,16 +26,7 @@ test: off
 deploy: off
     
 after_build:
-  - cmd: >-
-      mkdir "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
-
-      xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\%CONFIGURATION%" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%" /E /C
-
-      7z a "DynamicPaper.zip" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%"
- 
-      set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 6"
-   
-      iscc dynamicpaper-installer.iss /DConfiguration=%CONFIGURATION%
+  - build.bat
 
 # override common config
 for:
@@ -73,5 +64,5 @@ for:
   artifacts:
   - path: DynamicPaper.zip
     name: $(CONFIGURATION)_Build
-  - path: 'DynamicPaper-Setup*.exe'
+  - path: 'DynamicPaper-Setup.exe'
     name: $(CONFIGURATION)-Setup_Build
