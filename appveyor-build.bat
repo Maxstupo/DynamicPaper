@@ -8,7 +8,7 @@ xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\%CONFIGURATION%" "DynamicPaper_%
 
 
 REM make installer, if develop branch - remove version information from output filename
-set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 6"   
+set "PATH=%PATH%;C:\Program Files (x86)\Inno Setup 6"   
 
 if %APPVEYOR_REPO_BRANCH% == "develop" (
    iscc dynamicpaper-installer.iss /DConfiguration=%CONFIGURATION% /FDynamicPaper-Setup.exe
