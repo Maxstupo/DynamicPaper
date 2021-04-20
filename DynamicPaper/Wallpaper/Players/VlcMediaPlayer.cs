@@ -21,7 +21,22 @@
         public PlaylistItem PlayingMedia { get; private set; }
 
         public TimeSpan Duration => IsAttached ? TimeSpan.FromMilliseconds(vlcPlayer.Length) : TimeSpan.Zero;
-        public float Position => IsAttached ? vlcPlayer.Position : 0;
+   
+        public float Position {
+            get => IsAttached ? vlcPlayer.Position : 0;
+            set {
+                if (IsAttached)
+                    vlcPlayer.Position = value;
+            }
+        }
+
+        public int Volume {
+            get => IsAttached ? vlcPlayer.Volume : 0;
+            set {
+                if (IsAttached)
+                    vlcPlayer.Volume = value;
+            }
+        }
 
         private MediaPlayer vlcPlayer;
         private Control view;
@@ -39,7 +54,7 @@
             vlcPlayer.Paused += VlcPlayer_Change;
             vlcPlayer.Playing += VlcPlayer_Change;
             vlcPlayer.PositionChanged += VlcPlayer_PositionChanged;
-        
+
             view = new VideoView { MediaPlayer = vlcPlayer };
 
             view.Show();
@@ -82,7 +97,7 @@
 
         public void Play(PlaylistItem item = null) {
             Media media = item != PlayingMedia && item != null ? new Media(LibVLC, item.Filepath, FromType.FromPath) : vlcPlayer.Media;
-           
+
             if (vlcPlayer.Play(media)) {
                 if (PlayingMedia != null && item != null)
                     PlayingMedia.IsPlaying = false;
@@ -96,7 +111,7 @@
             }
         }
 
-          public void Pause() {
+        public void Pause() {
             if (IsAttached)
                 vlcPlayer.Pause();
         }

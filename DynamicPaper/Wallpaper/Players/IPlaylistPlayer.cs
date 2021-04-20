@@ -5,8 +5,9 @@
 
     public interface IPlayer : IDisposable {
 
+        float Position { get; set; }
         TimeSpan Duration { get; }
-        float Position { get; }
+        int Volume { get; set; }
 
         bool IsAttached { get; }
         bool IsPlaying { get; }

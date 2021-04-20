@@ -33,8 +33,24 @@
         public PlaylistItem PlayingMedia => player?.PlayingMedia;
 
         public TimeSpan Duration => player?.Duration ?? TimeSpan.Zero;
-        public float Position => player?.Position ?? 0;
 
+        public float Position {
+            get => player?.Position ?? 0;
+            set {
+                if (player != null)
+                    player.Position = value;
+            }
+        }
+
+        public int Volume {
+            get => player?.Volume ?? 0;
+            set {
+                if (player != null) {
+                    player.Volume = value;
+                    PlayingMedia.Volume = value;
+                }
+            }
+        }
 
         public event EventHandler OnChanged;
         public event EventHandler<float> OnPositionChanged;
@@ -72,7 +88,13 @@
             }
 
             player?.Attach(screen);
+
+
+
             player?.Play(item);
+
+            if (PlayingMedia != null && PlayingMedia.FromPlaylist)
+                Volume = PlayingMedia.Volume;
         }
 
 

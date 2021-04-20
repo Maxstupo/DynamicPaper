@@ -39,12 +39,10 @@
         [JsonProperty("show_time_remaining")]
         public bool ShowTimeLeft { get; set; }
 
-        [JsonProperty("playlists")]
+        [JsonProperty("monitor_playlists")]
         public Dictionary<int, Playlist> Playlists { get; } = new Dictionary<int, Playlist>();
 
 
     }
-
-
 
 }

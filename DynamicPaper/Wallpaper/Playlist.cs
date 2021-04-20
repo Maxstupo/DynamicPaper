@@ -1,20 +1,38 @@
 ﻿namespace Maxstupo.DynamicPaper.Wallpaper {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
 
+    [JsonObject]
     public sealed class Playlist : IEnumerable<PlaylistItem> {
 
+        [JsonProperty("items")]
         private readonly List<PlaylistItem> items = new List<PlaylistItem>();
+
+        [JsonIgnore]
         public IReadOnlyList<PlaylistItem> Items => items.AsReadOnly();
 
+        [JsonProperty("playing_index")]
         public int CurrentIndex { get; set; } = 0;
+
+        [JsonIgnore]
+        public int Count => items.Count;
 
         public event EventHandler OnChange;
 
-        public void Clear() {
+        public void Clear(bool notify = true) {
             items.Clear();
-            NotifyChanged();
+            if (notify)
+                NotifyChanged();
+        }
+
+        public void AddRange(IEnumerable<PlaylistItem> src, bool notify = true) {
+            items.AddRange(src);
+
+            if (notify)
+                NotifyChanged();
         }
 
         public void Add(PlaylistItem item, bool notify = true) {

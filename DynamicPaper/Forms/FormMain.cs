@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Diagnostics;
     using System.Drawing;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Windows.Forms;
     using HeyRed.Mime;
     using LibVLCSharp.Shared;
@@ -14,9 +16,12 @@
     using Maxstupo.DynamicPaper.Wallpaper;
     using Maxstupo.DynamicPaper.Wallpaper.Players;
     using Microsoft.WindowsAPICodePack.Dialogs;
+    using Newtonsoft.Json;
 
     public partial class FormMain : TrayAwareForm {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private const string SupportUrl = @"https://www.github.com/Maxstupo/DynamicPaper/wiki";
 
         private static readonly FileFilterBuilder FileFilterBuilder = new FileFilterBuilder()
            .Add("Image Files", "png", "jpg", "jpeg", "bmp", "gif")
@@ -24,6 +29,10 @@
            .Add("DynamicPaper Playlist Files", "dpp")
            .AddGroup("Supported Files", 0) // Will concat all previously added filters into a new filter. 
            .Add("All Files", "*");
+
+        private static readonly string PlaylistFileFilter = new FileFilterBuilder()
+           .Add("DynamicPaper Playlist Files", "dpp")
+           .Add("All Files", "*").ToString();
 
         public static readonly string FileFilter = FileFilterBuilder.ToString();
 
@@ -38,7 +47,6 @@
 
         private IPlaylistPlayer CurrentPlayer { get; set; }
         private readonly Dictionary<ScreenInfo, IPlaylistPlayer> players = new Dictionary<ScreenInfo, IPlaylistPlayer>();
-
 
         private bool willDrag = false;
         private bool hasDragged = false;
@@ -58,8 +66,8 @@
 
             MimeTypesMap.AddOrUpdate("playlist/json", "dpp");
 
-            MediaPlayerStore.Instance.RegisterPlayer<VlcMediaPlayer>("video/mkv", "video/mp4", "video/mov", "video/avi", "video/wmv", "video/gif", "video/webm");
-         
+            MediaPlayerStore.Instance.RegisterPlayer<VlcMediaPlayer>("video/x-matroska", "video/mp4", "video/mov", "video/avi", "video/wmv", "video/gif", "video/webm");
+
 
             settingsManager.OnSettingsChanged += (sender, settings) => {
                 CloseToTray = settings.CloseToTray;
@@ -79,14 +87,53 @@
             RefreshEnabled();
             UpdateStatusBar(0);
 
+            if (Settings.RestorePlaylists)
+                RestorePlaylists();
+
             if (Settings.StartMinimized && Settings.MinimizeToTray)
                 Visible = false;
 
         }
 
+        private void SaveCurrentPlaylistToFile(string filepath) {
+            string json = JsonConvert.SerializeObject(CurrentPlayer.Playlist, Formatting.Indented);
+            File.WriteAllText(filepath, json, Encoding.UTF8);
+        }
+
+        private void SavePlaylists() {
+            Logger.Debug("Saving playlists...");
+
+
+            Settings.Playlists.Clear();
+            foreach (ScreenInfo monitor in monitors) {
+                IPlaylistPlayer player = GetPlayer(monitor);
+
+                if (player.Playlist.Count == 0)
+                    continue;
+
+                Settings.Playlists.Add(monitor.Index, player.Playlist);
+            }
+
+            settingsManager.Save();
+        }
+
+        private void RestorePlaylists() {
+            Logger.Debug("Restoring playlists...");
+
+            foreach (ScreenInfo monitor in monitors) {
+                IPlaylistPlayer player = GetPlayer(monitor);
+                if (Settings.Playlists.TryGetValue(monitor.Index, out Playlist playlist)) {
+                    player.Playlist.Clear(false);
+                    player.Playlist.AddRange(playlist.Items, true);
+                }
+            }
+        }
+
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
             if (e.Cancel)
                 return;
+
+            SavePlaylists();
 
             Logger.Debug("Disposing players...");
             foreach (IPlaylistPlayer player in players.Values)
@@ -99,6 +146,8 @@
         }
 
         private IPlaylistPlayer GetPlayer(ScreenInfo info) {
+            if (info == null)
+                return null;
             if (players.TryGetValue(info, out IPlaylistPlayer player))
                 return player;
 
@@ -130,6 +179,8 @@
             timelineSlider.Enabled = isAttached;
             volumeSlider.Enabled = isAttached;
 
+            btnLoop.Enabled = btnShuffle.Enabled = openFileToolStripMenuItem.Enabled = openFolderToolStripMenuItem.Enabled = CurrentPlayer != null;
+
             btnPlayPause.Image = (CurrentPlayer?.IsPlaying ?? false) ? Properties.Resources.pause_button : Properties.Resources.play_button;
 
         }
@@ -146,12 +197,12 @@
         }
 
         private void UpdateStatusBar(float newTime) {
-            if (CurrentPlayer == null)
-                return;
-            TimeSpan current = TimeSpan.FromMilliseconds(CurrentPlayer.Duration.TotalMilliseconds * newTime);
-            tsslTime.Text = Settings.ShowTimeLeft ? $"-{CurrentPlayer.Duration - current:hh':'mm':'ss} / {CurrentPlayer.Duration:hh':'mm':'ss}" : $"{current:hh':'mm':'ss} / {CurrentPlayer.Duration:hh':'mm':'ss}";
+            TimeSpan duration = CurrentPlayer?.Duration ?? TimeSpan.Zero;
 
-            tsslCurrentTrack.Text = CurrentPlayer.PlayingMedia?.Filepath ?? string.Empty;
+            TimeSpan current = TimeSpan.FromMilliseconds(duration.TotalMilliseconds * newTime);
+            tsslTime.Text = Settings.ShowTimeLeft ? $"-{duration - current:hh':'mm':'ss} / {duration:hh':'mm':'ss}" : $"{current:hh':'mm':'ss} / {duration:hh':'mm':'ss}";
+
+            tsslCurrentTrack.Text = CurrentPlayer?.PlayingMedia?.Filepath ?? string.Empty;
         }
 
 
@@ -218,9 +269,6 @@
         #endregion
 
         public void AddPlaylistItem(string filepath, bool notifyChange = true) {
-            if (CurrentPlayer == null)
-                return;
-
             if (!File.Exists(filepath)) {
                 Logger.Warn("Playlist item doesn't exist {0}, skip adding...", filepath);
                 return;
@@ -235,7 +283,7 @@
 
             Logger.Debug("Adding playlist item {0}", filepath);
 
-            PlaylistItem item = new PlaylistItem(filepath, mimeType);
+            PlaylistItem item = new PlaylistItem(filepath);
             CurrentPlayer.Playlist.Add(item, notifyChange);
         }
 
@@ -254,8 +302,9 @@
                 btnLoop.Value = CurrentPlayer.LoopMode;
                 btnShuffle.Value = CurrentPlayer.ShuffleMode;
             }
+            RefreshPlaylist();
         }
-   
+
         #region Events
 
         private void CurrentPlayer_OnPositionChanged(object sender, float time) {
@@ -281,6 +330,10 @@
             Action action = () => {
                 RefreshPlaylist();
                 RefreshEnabled();
+                
+                volumeSlider.DisableNotify = true;
+                volumeSlider.Volume = (CurrentPlayer.Volume / 100f);
+                volumeSlider.DisableNotify = false;
             };
 
             if (InvokeRequired) {
@@ -323,13 +376,20 @@
             Application.Exit();
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
+            using (AboutBox dialog = new AboutBox())
+                dialog.ShowDialog(this);
+        }
+
+        private void supportToolStripMenuItem_Click(object sender, EventArgs e) {
+            Process.Start(SupportUrl);
+        }
+
         #endregion
 
         #region Player Control Events
 
         private void btnPlayPause_Click(object sender, EventArgs e) {
-            if (CurrentPlayer == null)
-                return;
 
             PlaylistItem item = SelectedPlaylistItem;
 
@@ -348,21 +408,14 @@
         }
 
         private void btnStop_Click(object sender, EventArgs e) {
-            if (CurrentPlayer == null)
-                return;
-
             CurrentPlayer.Stop();
         }
 
         private void btnLoop_Click(object sender, EventArgs e) {
-            if (CurrentPlayer == null)
-                return;
             CurrentPlayer.LoopMode = btnLoop.Value;
         }
 
         private void btnShuffle_Click(object sender, EventArgs e) {
-            if (CurrentPlayer == null)
-                return;
             CurrentPlayer.ShuffleMode = btnShuffle.Value;
         }
 
@@ -443,10 +496,10 @@
                 }
             }
 
-            if (e.Button == MouseButtons.Right) 
+            if (e.Button == MouseButtons.Right && CurrentPlayer != null)
                 cmsPlaylist.Show(lbxPlaylist.PointToScreen(e.Location));
         }
-      
+
         private void lbxPlaylist_MouseDoubleClick(object sender, MouseEventArgs e) {
             if (lbxPlaylist.SelectedItem != null)
                 playToolStripMenuItem.PerformClick();
@@ -470,35 +523,25 @@
 
             moveToToolStripMenuItem.DropDownItems.Clear();
             moveToToolStripMenuItem.DropDownItems.AddRange(monitors.Where(x => x != cbxMonitor.SelectedItem).Select(x => new ToolStripMenuItem(x.DisplayName) { Tag = x }).ToArray());
-
         }
 
         private void clearPlaylistToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (CurrentPlayer == null)
-                return;
-
             CurrentPlayer.Playlist.Clear();
         }
 
         private void removeToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (CurrentPlayer == null)
-                return;
-
             foreach (PlaylistItem item in lbxPlaylist.SelectedItems.Cast<PlaylistItem>().ToList())
                 CurrentPlayer.Playlist.Remove(item);
         }
 
         private void moveToToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-            if (CurrentPlayer == null)
-                return;
-
             IPlaylistPlayer targetPlayer = GetPlayer((ScreenInfo) e.ClickedItem.Tag);
             if (targetPlayer != null) {
 
                 foreach (PlaylistItem item in lbxPlaylist.SelectedItems.Cast<PlaylistItem>()) {
                     if (!targetPlayer.Playlist.Contains(item)) {
-                        targetPlayer.Playlist.Add(item);
-                        CurrentPlayer.Playlist.Remove(item);
+                        targetPlayer.Playlist.Add(item, false);
+                        CurrentPlayer.Playlist.Remove(item, false);
                     }
                 }
 
@@ -517,7 +560,27 @@
             UpdateStatusBar(CurrentPlayer?.Position ?? 0);
         }
 
+        private void savePlaylistToFileToolStripMenuItem_Click(object sender, EventArgs e) {
+            using (SaveFileDialog dialog = new SaveFileDialog()) {
+                dialog.Title = "Save playlist as...";
+                dialog.Filter = PlaylistFileFilter;
+
+                if (dialog.ShowDialog(this) == DialogResult.OK) {
+                    SaveCurrentPlaylistToFile(dialog.FileName);
+                }
+            }
+        }
+
+
         #endregion
+
+        private void timelineSlider_TimeChanged(object sender, float e) {
+            CurrentPlayer.Position = e;
+        }
+
+        private void volumeSlider_VolumeChanged(object sender, float e) {
+            CurrentPlayer.Volume = (int) (e * 100f);
+        }
 
     }
 
