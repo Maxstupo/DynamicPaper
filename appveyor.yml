@@ -73,5 +73,5 @@ for:
   artifacts:
   - path: DynamicPaper.zip
     name: $(CONFIGURATION)_Build
-  - path: /DynamicPaper-Setup_*\.exe/
+  - path: 'DynamicPaper-Setup*.exe'
     name: $(CONFIGURATION)-Setup_Build
