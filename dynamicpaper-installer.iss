@@ -10,7 +10,7 @@
 
 ;/DApplicationVersion=1.0.0.0
 #ifndef ApplicationVersion
-    #define ApplicationVersion GetFileVersion("DynamicPaper\bin\" + Configuration + "\DynamicPaper.exe")
+    #define ApplicationVersion GetVersionNumbersString("DynamicPaper\bin\" + Configuration + "\DynamicPaper.exe")
 #endif
 
 #define MyAppPublisher "Maxstupo"
