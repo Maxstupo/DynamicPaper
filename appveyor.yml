@@ -26,7 +26,7 @@ test: off
 deploy: off
     
 after_build:
-  - build.bat
+  - 'appveyor-build.bat'
 
 # override common config
 for:
