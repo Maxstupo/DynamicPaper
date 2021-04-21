@@ -19,8 +19,7 @@
 
         public override float Position { get => vlcPlayer.Position; set => vlcPlayer.Position = value; }
         public override TimeSpan Duration { get => TimeSpan.FromMilliseconds(vlcPlayer.Length); protected set => throw new NotSupportedException(); }
-        public override TimeSpan? CustomDuration { get; set; }
-
+  
         public override int Volume { get => vlcPlayer.Volume; set => vlcPlayer.Volume = value; }
 
         public override bool IsPlaying { get => vlcPlayer.IsPlaying; protected set => throw new NotSupportedException(); }

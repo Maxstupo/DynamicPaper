@@ -25,7 +25,11 @@
 
             cbRestorePlaying.DataBindings.Add(nameof(CheckBox.Checked), bindingSource, nameof(AppSettings.RestorePlaying));
             cbRestorePlaylists.DataBindings.Add(nameof(CheckBox.Checked), bindingSource, nameof(AppSettings.RestorePlaylists));
-          
+
+            Binding binding = nudDefaultMediaDuration.DataBindings.Add(nameof(NumericUpDown.Value), bindingSource, nameof(AppSettings.DefaultMediaDuration));
+            binding.Format += (s, e) => { e.Value = (decimal) ((int) ((TimeSpan) e.Value).TotalSeconds); };
+            binding.Parse += (s, e) => { e.Value = TimeSpan.FromSeconds(int.Parse(e.Value.ToString())); };
+
             cbRestorePlaylists_CheckedChanged(null, EventArgs.Empty);
         }
 
@@ -48,6 +52,9 @@
             cbRestorePlaying.Enabled = cbRestorePlaylists.Checked;
         }
 
+        private void FormSettings_Load(object sender, EventArgs e) {
+
+        }
     }
 
 }

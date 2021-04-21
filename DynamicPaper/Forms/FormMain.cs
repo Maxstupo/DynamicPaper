@@ -27,7 +27,7 @@
            .Add("Image Files", "png", "jpg", "jpeg", "bmp", "gif", "tiff", "svg")
            .Add("Video Files", "mkv", "mp4", "mov", "avi", "wmv", "gif", "webm")
            .Add("DynamicPaper Playlist Files", "dpp")
-           //.Add("DynamicPaper Shadertoy Files", "dpst", "shadertoy")
+           .Add("DynamicPaper Shadertoy Files", "dpst", "shadertoy")
            .AddGroup("Supported Files", 0) // Will concat all previously added filters into a new filter. 
            .Add("All Files", "*");
 
@@ -179,7 +179,7 @@
             if (players.TryGetValue(info, out IPlaylistPlayer player))
                 return player;
 
-            player = new PlaylistPlayer(info.Screen);
+            player = new MultiMediaPlayer(info.Screen, Settings);
             players[info] = player;
             return player;
         }
@@ -310,7 +310,8 @@
 
             if (mimeType.StartsWith("playlist/")) {
                 // TODO: Add support for opening playlist files.
-                return;
+                throw new NotImplementedException();
+             //   return;
             }
 
             Logger.Debug("Adding playlist item {0}", filepath);
@@ -530,16 +531,22 @@
 
         private void playToolStripMenuItem_Click(object sender, EventArgs e) {
             if (CurrentPlayer != null)
-                CurrentPlayer.Play(lbxPlaylist.SelectedItem as PlaylistItem);
+                CurrentPlayer.Play(lbxPlaylist.SelectedItem as IPlaylistItem);
         }
 
         private void cmsPlaylist_Opening(object sender, System.ComponentModel.CancelEventArgs e) {
             bool hasItems = lbxPlaylist.SelectedItems.Count > 0;
 
+            bool hasNativeDuration = lbxPlaylist.SelectedItems.Cast<IPlaylistItem>().Any(itm => itm.HasNativeDuration);
+
+            setDurationToolStripMenuItem.Visible = toolStripSeparator5.Visible = !hasNativeDuration && hasItems;
+
             playToolStripMenuItem.Visible = hasItems;
             moveToToolStripMenuItem.Visible = hasItems;
             toolStripSeparator4.Visible = hasItems;
             removeToolStripMenuItem.Visible = hasItems;
+
+
 
             moveToToolStripMenuItem.DropDownItems.Clear();
             moveToToolStripMenuItem.DropDownItems.AddRange(monitors.Where(x => x != cbxMonitor.SelectedItem).Select(x => new ToolStripMenuItem(x.DisplayName) { Tag = x }).ToArray());
@@ -576,7 +583,6 @@
 
         private void tsslTime_Click(object sender, EventArgs e) {
             Settings.ShowTimeLeft = !Settings.ShowTimeLeft;
-            settingsManager.Save();
             UpdateStatusBar(CurrentPlayer?.Position ?? 0);
         }
 
@@ -591,16 +597,36 @@
             }
         }
 
-
-        #endregion
-
         private void timelineSlider_TimeChanged(object sender, float e) {
             CurrentPlayer.Position = e;
+            UpdateStatusBar(e);
         }
 
         private void volumeSlider_VolumeChanged(object sender, float e) {
             CurrentPlayer.Volume = (int) (e * 100f);
         }
+
+        private void setDurationToolStripMenuItem_Click(object sender, EventArgs e) {
+            TimeSpan duration = TimeSpan.Zero;
+
+            if (lbxPlaylist.SelectedItems.Count == 1) {
+                IPlaylistItem item = lbxPlaylist.SelectedItems[0] as IPlaylistItem;
+                duration = item.CustomDuration;
+            }
+
+            using (DialogSetDuration dialog = new DialogSetDuration(duration)) {
+                if (dialog.ShowDialog(this) == DialogResult.OK) {
+                    duration = dialog.Duration;
+
+                    foreach (IPlaylistItem item in lbxPlaylist.SelectedItems.Cast<IPlaylistItem>())
+                        item.CustomDuration = duration;
+
+                }
+            }
+
+        }
+
+        #endregion
 
     }
 

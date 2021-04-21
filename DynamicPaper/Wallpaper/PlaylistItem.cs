@@ -2,6 +2,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.IO;
     using HeyRed.Mime;
     using Maxstupo.DynamicPaper.Controls;
@@ -26,11 +27,14 @@
         [ListBoxItemHighlighting]
         public bool IsLoaded { get; set; } = false;
 
-        [JsonIgnore]
-        public string MimeType => MimeTypesMap.GetMimeType(Filepath);
+        [JsonIgnore] public string MimeType => MimeTypesMap.GetMimeType(Filepath);
 
-        [JsonIgnore]
-        public bool FromPlaylist { get; set; } = true;
+        [JsonIgnore] public bool HasNativeDuration => MimeType.StartsWith("video") || MimeType.StartsWith("audio");
+        [JsonIgnore] public bool HasDuration => HasNativeDuration || CustomDuration.Ticks > 0;
+
+        public TimeSpan CustomDuration { get; set; }
+
+        public Color BackColor { get; set; } = Color.Black;
 
         public PlaylistItem() { }
 

@@ -3,25 +3,6 @@
     using System;
     using System.Windows.Forms;
 
-    public interface IMediaItem {
-
-        string Filepath { get; }
-
-        string MimeType { get; }
-
-        int PreferredVolume { get; set; }
-
-        bool IsLoaded { get; set; }
-
-    }
-
-    public interface IPlaylistItem : IMediaItem {
-
-        int PlaylistIndex { get; set; }
-
-    }
-
-
     public interface IPlayer : IDisposable {
 
         /// <summary>The current time position of the media between 0.0 and 1.0</summary>
@@ -30,8 +11,8 @@
         /// <summary>The duration of the media.</summary>
         TimeSpan Duration { get; }
 
-        /// <summary>The custom duration of the media. Will override the normal duration if not null.</summary>
-        TimeSpan? CustomDuration { get; set; }
+        /// <summary>The default duration used by media that dont have a native duration and haven't had a custom duration set.</summary>
+        TimeSpan DefaultDuration { get; set; }
 
         int Volume { get; set; }
 
@@ -101,6 +82,9 @@
 
         /// <summary>Detaches the view from the desktop background window.</summary>
         void Detach();
+
+        /// <summary>Invoked when a player is reused and about to play a different media item, requiring the state of the player to be reset.</summary>
+        void Reset();
 
     }
 

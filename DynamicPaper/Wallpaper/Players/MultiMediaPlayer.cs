@@ -4,12 +4,13 @@
     using System.Threading;
     using System.Windows.Forms;
 
-    public sealed class PlaylistPlayer : IPlaylistPlayer {
+    public sealed class MultiMediaPlayer : IPlaylistPlayer {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly Random random = new Random();
 
         private readonly Screen screen;
+        private readonly AppSettings settings;
 
         public float Position {
             get => internalPlayer?.Position ?? 0;
@@ -19,7 +20,7 @@
             }
         }
         public TimeSpan Duration => internalPlayer?.Duration ?? TimeSpan.Zero;
-        public TimeSpan? CustomDuration { get; set; }
+        public TimeSpan DefaultDuration { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
 
         public int Volume {
             get => internalPlayer?.Volume ?? 0;
@@ -38,7 +39,6 @@
         public LoopMode LoopMode { get; set; }
         public ShuffleMode ShuffleMode { get; set; }
 
-
         public event EventHandler OnChanged;
         public event EventHandler<float> OnPositionChanged;
 
@@ -46,8 +46,9 @@
 
         private readonly SynchronizationContext context;
 
-        public PlaylistPlayer(Screen screen) {
+        public MultiMediaPlayer(Screen screen, AppSettings settings) {
             this.screen = screen;
+            this.settings = settings;
             Playlist.OnChange += Playlist_OnChange;
 
             context = SynchronizationContext.Current;
@@ -63,6 +64,7 @@
         public void Play(IMediaItem item = null) {
             if (item != null) {
                 IAttachablePlayer newPlayer = MediaPlayerStore.Instance.CreatePlayer(item.MimeType, out bool isRecycled, internalPlayer);
+
                 if (newPlayer == null) {
                     Logger.Warn($"Failed to find suitable player for '{0}'", item.MimeType);
                     return;
@@ -73,6 +75,7 @@
 
                     internalPlayer.OnChanged -= InternalPlayer_OnChanged;
                     internalPlayer.OnPositionChanged -= InternalPlayer_OnPositionChanged;
+                    internalPlayer.Stop();
                     internalPlayer.Dispose();
                 }
 
@@ -84,12 +87,20 @@
                     internalPlayer.OnChanged += InternalPlayer_OnChanged;
                     internalPlayer.OnPositionChanged += InternalPlayer_OnPositionChanged;
 
+                } else if (item != internalPlayer.Media) {
+                    Logger.Debug("Reseting player...");
+                    internalPlayer.Reset();
                 }
 
             }
 
-            internalPlayer?.Attach(screen);
-            internalPlayer?.Play(item);
+            if (internalPlayer != null) {
+                internalPlayer.DefaultDuration = settings.DefaultMediaDuration;
+
+                internalPlayer.Attach(screen);
+                internalPlayer.Play(item);
+            }
+
         }
 
 

@@ -11,7 +11,7 @@
 
         public abstract float Position { get; set; }
         public abstract TimeSpan Duration { get; protected set; }
-        public abstract TimeSpan? CustomDuration { get; set; }
+        public TimeSpan DefaultDuration { get; set; }
 
         public abstract int Volume { get; set; }
         public abstract bool IsPlaying { get; protected set; }
@@ -19,7 +19,7 @@
 
 
         private IMediaItem media;
-        public IMediaItem Media {
+        public virtual IMediaItem Media {
             get => media;
             protected set {
                 if (media != null && value != media)
@@ -32,10 +32,13 @@
 
         public bool IsAttached { get; private set; }
 
+
         public event EventHandler OnChanged;
         public event EventHandler<float> OnPositionChanged;
 
         protected T View { get; private set; }
+
+
 
         // The original window parent pointer of the view. Restored on Detach()
         private IntPtr originalParent = IntPtr.Zero;
@@ -48,6 +51,8 @@
                 return;
             Logger.Trace("Attaching to screen...");
 
+            IsAttached = true;
+
             if (View == null) {
                 Logger.Debug("Creating view...");
 
@@ -59,21 +64,20 @@
             View.Bounds = WindowsWallpaper.GetScreenBounds(screen);
 
             WindowsWallpaper.SetParent(View);
-
-            IsAttached = true;
         }
 
         public void Detach() {
             if (!IsAttached)
                 return;
+
+            IsAttached = false;
+
             Logger.Trace("Detaching from screen...");
 
             NativeMethods.SetParent(View.Handle, originalParent);
             View?.Hide();
 
             WindowsWallpaper.ResetDesktopBackground();
-
-            IsAttached = false;
         }
 
         public void Play(IMediaItem item = null) {
@@ -98,6 +102,7 @@
         protected abstract void PauseMedia();
         protected abstract void StopMedia();
 
+        public virtual void Reset() { }
 
         protected void NotifyOnChanged() {
             OnChanged?.Invoke(this, EventArgs.Empty);
@@ -125,6 +130,7 @@
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
 
         // uncomment if using unmanaged resources in this class.
         // ~AttachablePlayer() {

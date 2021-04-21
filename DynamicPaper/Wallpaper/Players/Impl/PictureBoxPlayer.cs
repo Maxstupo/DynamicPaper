@@ -1,52 +1,87 @@
 ﻿namespace Maxstupo.DynamicPaper.Wallpaper.Players.Impl {
+
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     public sealed class PictureBoxPlayer : AttachablePlayer<PictureBox> {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public override float Position { get; set; }
-        public override TimeSpan Duration { get; protected set; }
-        public override TimeSpan? CustomDuration { get; set; }
+        private const int UpdateRate = 250;
 
-        public override int Volume { get; set; }
+        public override float Position { get => time / (float) Duration.TotalMilliseconds; set => time = (int) (value * (float) Duration.TotalMilliseconds); }
+        public override TimeSpan Duration {
+            get => Media != null ? (Media.CustomDuration.TotalSeconds > 0 ? Media.CustomDuration : DefaultDuration) : TimeSpan.Zero;
+            protected set => throw new NotSupportedException();
+        }
 
-        public override bool IsPlaying { get; protected set; }
-        public override bool IsEnded { get; protected set; }
+        public override int Volume { get => 0; set { } }
 
+        public override bool IsPlaying { get => playTimer.Enabled; protected set => throw new NotSupportedException(); }
+        public override bool IsEnded { get => Position >= 1f; protected set => throw new NotSupportedException(); }
+
+        private int time;
+        private Timer playTimer;
 
         public override PictureBox CreateView(Screen screen) {
-            return new PictureBox {
+            PictureBox box = new PictureBox {
                 SizeMode = PictureBoxSizeMode.Zoom
             };
+
+            playTimer = new Timer { Interval = UpdateRate };
+            playTimer.Tick += Timer_Tick;
+
+            return box;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e) {
+            time += UpdateRate;
+
+            if (IsEnded) {
+                playTimer.Stop();
+                NotifyOnChanged();
+            }
+
+            NotifyOnPositionChanged(Position);
         }
 
         protected override void PlayMedia(IMediaItem item = null) {
-            IsPlaying = true;
-
-            if (item != null)
+            if (item != null) {
                 Media = item;
+                View.BackColor = item.BackColor;
+                View.ImageLocation = item.Filepath;
+            } else if (Media != null) {
+                Position = 0;
+            }
 
-            View.ImageLocation = item.Filepath;
+            playTimer.Start();
 
             NotifyOnChanged();
         }
 
         protected override void PauseMedia() {
-            IsPlaying = !IsPlaying;
+            playTimer.Enabled = !playTimer.Enabled;
 
             NotifyOnChanged();
         }
 
 
         protected override void StopMedia() {
-            IsPlaying = false;
             Media = null;
+            playTimer.Stop();
 
             NotifyOnChanged();
+        }
+
+        public override void Reset() {
+            time = 0;
+        }
+
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                playTimer?.Dispose();
+                playTimer = null;
+            }
+            base.Dispose(disposing);
         }
 
     }

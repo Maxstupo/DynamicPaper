@@ -69,10 +69,13 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.setDurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.savePlaylistToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearPlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playlistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -344,6 +347,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.playlistToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -409,12 +413,14 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.addFileToolStripMenuItem,
             this.addFolderToolStripMenuItem,
             this.toolStripSeparator5,
+            this.setDurationToolStripMenuItem,
+            this.toolStripSeparator8,
             this.savePlaylistToFileToolStripMenuItem,
             this.toolStripSeparator6,
             this.removeToolStripMenuItem,
             this.clearPlaylistToolStripMenuItem});
             this.cmsPlaylist.Name = "cmsPlaylist";
-            this.cmsPlaylist.Size = new System.Drawing.Size(183, 176);
+            this.cmsPlaylist.Size = new System.Drawing.Size(183, 204);
             this.cmsPlaylist.Opening += new System.ComponentModel.CancelEventHandler(this.cmsPlaylist_Opening);
             // 
             // playToolStripMenuItem
@@ -455,6 +461,18 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(179, 6);
             // 
+            // setDurationToolStripMenuItem
+            // 
+            this.setDurationToolStripMenuItem.Name = "setDurationToolStripMenuItem";
+            this.setDurationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.setDurationToolStripMenuItem.Text = "Set Duration...";
+            this.setDurationToolStripMenuItem.Click += new System.EventHandler(this.setDurationToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(179, 6);
+            // 
             // savePlaylistToFileToolStripMenuItem
             // 
             this.savePlaylistToFileToolStripMenuItem.Name = "savePlaylistToFileToolStripMenuItem";
@@ -480,6 +498,12 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.clearPlaylistToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.clearPlaylistToolStripMenuItem.Text = "Clear the playlist";
             this.clearPlaylistToolStripMenuItem.Click += new System.EventHandler(this.clearPlaylistToolStripMenuItem_Click);
+            // 
+            // playlistToolStripMenuItem
+            // 
+            this.playlistToolStripMenuItem.Name = "playlistToolStripMenuItem";
+            this.playlistToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
+            this.playlistToolStripMenuItem.Text = "Playlist";
             // 
             // FormMain
             // 
@@ -560,6 +584,9 @@ namespace Maxstupo.DynamicPaper.Forms {
         private ToolStripMenuItem supportToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+        private ToolStripMenuItem setDurationToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator8;
+        private ToolStripMenuItem playlistToolStripMenuItem;
     }
 }
 
