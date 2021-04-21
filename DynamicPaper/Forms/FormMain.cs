@@ -27,6 +27,7 @@
            .Add("Image Files", "png", "jpg", "jpeg", "bmp", "gif", "tiff", "svg")
            .Add("Video Files", "mkv", "mp4", "mov", "avi", "wmv", "gif", "webm")
            .Add("DynamicPaper Playlist Files", "dpp")
+           //.Add("DynamicPaper Shadertoy Files", "dpst", "shadertoy")
            .AddGroup("Supported Files", 0) // Will concat all previously added filters into a new filter. 
            .Add("All Files", "*");
 
@@ -65,9 +66,12 @@
             }
 
             MimeTypesMap.AddOrUpdate("playlist/json", "dpp");
+            MimeTypesMap.AddOrUpdate("shadertoy/dpst", "dpst");
+            MimeTypesMap.AddOrUpdate("shadertoy/shadertoy", "shadertoy");
 
             MediaPlayerStore.Instance.RegisterPlayer<VlcMediaPlayer>("video/x-matroska", "video/mp4", "video/mov", "video/avi", "video/wmv", "video/gif", "video/webm");
             MediaPlayerStore.Instance.RegisterPlayer<PictureBoxPlayer>("image/jpeg", "image/png", "image/jpg", "image/bmp", "image/tiff", "image/svg");
+            MediaPlayerStore.Instance.RegisterPlayer<ShaderToyPlayer>("shadertoy/dpst", "shadertoy/shadertoy");
 
             settingsManager.OnSettingsChanged += (sender, settings) => {
                 CloseToTray = settings.CloseToTray;
@@ -92,7 +96,7 @@
             if (Settings.RestorePlaylists)
                 RestorePlaylists();
 
-            if (Settings.RestorePlaying)
+            if (Settings.RestorePlaying && Settings.RestorePlaylists)
                 RestorePlaying();
 
 

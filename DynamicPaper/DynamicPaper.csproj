@@ -115,6 +115,8 @@
     <Compile Include="Utility\Windows\WindowsUtility.cs" />
     <Compile Include="Utility\Windows\WindowsWallpaper.cs" />
     <Compile Include="Wallpaper\Players\AttachablePlayer.cs" />
+    <Compile Include="Wallpaper\Players\Impl\ShaderToyPlayer.cs" />
+    <Compile Include="Wallpaper\Players\OpenGLPlayer.cs" />
     <Compile Include="Wallpaper\Players\Impl\PictureBoxPlayer.cs" />
     <Compile Include="Wallpaper\Players\Impl\PlaylistPlayer.cs" />
     <Compile Include="Wallpaper\Players\Impl\VlcMediaPlayer.cs" />
