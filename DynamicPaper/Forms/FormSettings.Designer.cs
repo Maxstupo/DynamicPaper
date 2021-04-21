@@ -99,6 +99,7 @@
             this.cbRestorePlaylists.TabIndex = 4;
             this.cbRestorePlaylists.Text = "Restore playlist items";
             this.cbRestorePlaylists.UseVisualStyleBackColor = true;
+            this.cbRestorePlaylists.CheckedChanged += new System.EventHandler(this.cbRestorePlaylists_CheckedChanged);
             // 
             // cbCheckForUpdates
             // 
