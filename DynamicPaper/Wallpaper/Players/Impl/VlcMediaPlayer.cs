@@ -1,6 +1,6 @@
 ﻿namespace Maxstupo.DynamicPaper.Wallpaper.Players.Impl {
+
     using System;
-    using System.Threading;
     using System.Windows.Forms;
     using LibVLCSharp.Shared;
     using LibVLCSharp.WinForms;
@@ -53,7 +53,6 @@
         }
 
         private void VlcPlayer_StateChanged(object sender, EventArgs e) {
-            Logger.Debug("VlcPlayer_StateChanged: {0}", IsPlaying);
             NotifyOnChanged(); // MediaPlayer events are invoked from a different thread. 
         }
 

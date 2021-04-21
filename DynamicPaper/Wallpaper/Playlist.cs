@@ -3,7 +3,6 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using Maxstupo.DynamicPaper.Wallpaper.Players;
     using Newtonsoft.Json;
 
     [JsonObject]
@@ -17,6 +16,9 @@
 
         [JsonProperty("playing_index")]
         public int CurrentIndex { get; set; } = 0;
+
+        [JsonIgnore]
+        public PlaylistItem CurrentItem => Count > 0 ? items[CurrentIndex] : null;
 
         [JsonIgnore]
         public int Count => items.Count;

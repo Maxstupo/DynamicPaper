@@ -10,7 +10,6 @@
     using System.Text;
     using System.Windows.Forms;
     using HeyRed.Mime;
-    using LibVLCSharp.Shared;
     using Maxstupo.DynamicPaper.Utility;
     using Maxstupo.DynamicPaper.Utility.Windows;
     using Maxstupo.DynamicPaper.Wallpaper;
@@ -93,6 +92,10 @@
             if (Settings.RestorePlaylists)
                 RestorePlaylists();
 
+            if (Settings.RestorePlaying)
+                RestorePlaying();
+
+
             if (Settings.StartMinimized && Settings.MinimizeToTray)
                 Visible = false;
 
@@ -128,7 +131,20 @@
                 if (Settings.Playlists.TryGetValue(monitor.Index, out Playlist playlist)) {
                     player.Playlist.Clear(false);
                     player.Playlist.AddRange(playlist.Items, true);
+
+                    player.Playlist.CurrentIndex = playlist.CurrentIndex;
                 }
+            }
+        }
+
+        private void RestorePlaying() {
+            Logger.Debug("Restoring currently playing...");
+
+            foreach (ScreenInfo monitor in monitors) {
+                IPlaylistPlayer player = GetPlayer(monitor);
+
+                if (player.Playlist.Count > 0)
+                    player.Play(player.Playlist.CurrentItem);
             }
         }
 
