@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using Maxstupo.DynamicPaper.Wallpaper.Players;
     using Newtonsoft.Json;
 
     [JsonObject]
@@ -22,6 +23,15 @@
 
         public event EventHandler OnChange;
 
+        public Playlist() {
+
+        }
+
+        private void CalcuateIndices() {
+            for (int i = 0; i < Count; i++)
+                items[i].PlaylistIndex = i;
+        }
+
         public void Clear(bool notify = true) {
             items.Clear();
             if (notify)
@@ -30,7 +40,7 @@
 
         public void AddRange(IEnumerable<PlaylistItem> src, bool notify = true) {
             items.AddRange(src);
-
+            CalcuateIndices();
             if (notify)
                 NotifyChanged();
         }
@@ -38,7 +48,9 @@
         public void Add(PlaylistItem item, bool notify = true) {
             if (item == null)
                 return;
+
             items.Add(item);
+            CalcuateIndices();
 
             if (notify)
                 NotifyChanged();
@@ -47,6 +59,8 @@
         public bool Remove(PlaylistItem item, bool notify = true) {
 
             bool result = items.Remove(item);
+            if (result)
+                CalcuateIndices();
 
             if (notify && result)
                 NotifyChanged();
@@ -57,7 +71,10 @@
         public void Insert(int index, PlaylistItem item, bool notify = true) {
             if (item == null || index < 0)
                 return;
+
             items.Insert(index, item);
+
+            CalcuateIndices();
 
             if (notify)
                 NotifyChanged();
@@ -74,7 +91,6 @@
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
-
 
     }
 

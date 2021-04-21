@@ -1,11 +1,15 @@
 ﻿namespace Maxstupo.DynamicPaper.Utility {
 
     using System;
-    using System.Diagnostics;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Windows.Forms;
+    using Maxstupo.DynamicPaper.Wallpaper;
+    using Maxstupo.DynamicPaper.Wallpaper.Players;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Serialization;
 
     public interface ISettings { void RestoreDefaults(); }
 
@@ -58,6 +62,7 @@
         public SettingsManager<T> Save() {
             Logger.Info("Saving to {0}", Filepath);
 
+          
             string json = JsonConvert.SerializeObject(Settings, Formatted ? Formatting.Indented : Formatting.None);
 
             File.WriteAllText(Filepath, json, Encoding);

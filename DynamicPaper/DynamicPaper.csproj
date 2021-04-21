@@ -114,12 +114,14 @@
     <Compile Include="Utility\Windows\SPIF.cs" />
     <Compile Include="Utility\Windows\WindowsUtility.cs" />
     <Compile Include="Utility\Windows\WindowsWallpaper.cs" />
-    <Compile Include="Wallpaper\Players\IPlaylistPlayer.cs" />
+    <Compile Include="Wallpaper\Players\AttachablePlayer.cs" />
+    <Compile Include="Wallpaper\Players\Impl\PictureBoxPlayer.cs" />
+    <Compile Include="Wallpaper\Players\Impl\PlaylistPlayer.cs" />
+    <Compile Include="Wallpaper\Players\Impl\VlcMediaPlayer.cs" />
+    <Compile Include="Wallpaper\Players\IPlayer.cs" />
     <Compile Include="Wallpaper\MediaPlayerStore.cs" />
     <Compile Include="Wallpaper\Playlist.cs" />
     <Compile Include="Wallpaper\PlaylistItem.cs" />
-    <Compile Include="Wallpaper\Players\VlcMediaPlayer.cs" />
-    <Compile Include="Wallpaper\Players\PlaylistPlayer.cs" />
     <EmbeddedResource Include="Controls\TimelineSlider.resx">
       <DependentUpon>TimelineSlider.cs</DependentUpon>
     </EmbeddedResource>

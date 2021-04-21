@@ -44,6 +44,10 @@
             SetParent(control.Handle);
         }
 
+        public static IntPtr GetParent(Control control) {
+            return NativeMethods.GetParent(control.Handle);
+        }
+
         public static void SetParent(IntPtr handle) {
             if (workerw == IntPtr.Zero)
                 throw new InvalidOperationException("WallpaperSystem.Init() must be called before setting form parent!");

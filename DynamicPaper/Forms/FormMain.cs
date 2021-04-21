@@ -15,6 +15,7 @@
     using Maxstupo.DynamicPaper.Utility.Windows;
     using Maxstupo.DynamicPaper.Wallpaper;
     using Maxstupo.DynamicPaper.Wallpaper.Players;
+    using Maxstupo.DynamicPaper.Wallpaper.Players.Impl;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using Newtonsoft.Json;
 
@@ -24,7 +25,7 @@
         private const string SupportUrl = @"https://www.github.com/Maxstupo/DynamicPaper/wiki";
 
         private static readonly FileFilterBuilder FileFilterBuilder = new FileFilterBuilder()
-           .Add("Image Files", "png", "jpg", "jpeg", "bmp", "gif")
+           .Add("Image Files", "png", "jpg", "jpeg", "bmp", "gif", "tiff", "svg")
            .Add("Video Files", "mkv", "mp4", "mov", "avi", "wmv", "gif", "webm")
            .Add("DynamicPaper Playlist Files", "dpp")
            .AddGroup("Supported Files", 0) // Will concat all previously added filters into a new filter. 
@@ -39,7 +40,7 @@
         private ScreenInfo[] monitors;
         private ScreenInfo lastSelectedMonitor;
 
-        private PlaylistItem SelectedPlaylistItem => lbxPlaylist.SelectedItem as PlaylistItem;
+        private IPlaylistItem SelectedPlaylistItem => lbxPlaylist.SelectedItem as IPlaylistItem;
 
         private AppSettings Settings => settingsManager.Settings;
         private readonly SettingsManager<AppSettings> settingsManager = new SettingsManager<AppSettings>("settings.json", () => new AppSettings());
@@ -55,7 +56,7 @@
         public FormMain() {
             if (!DesignMode) {
                 Logger.Debug("Initializing LibVLC...");
-                Core.Initialize();
+                Vlc.Initialize();
             }
 
             Logger.Debug("Initializing windows wallpaper...");
@@ -67,7 +68,7 @@
             MimeTypesMap.AddOrUpdate("playlist/json", "dpp");
 
             MediaPlayerStore.Instance.RegisterPlayer<VlcMediaPlayer>("video/x-matroska", "video/mp4", "video/mov", "video/avi", "video/wmv", "video/gif", "video/webm");
-
+            MediaPlayerStore.Instance.RegisterPlayer<PictureBoxPlayer>("image/jpeg", "image/png", "image/jpg", "image/bmp", "image/tiff", "image/svg");
 
             settingsManager.OnSettingsChanged += (sender, settings) => {
                 CloseToTray = settings.CloseToTray;
@@ -85,7 +86,9 @@
         private void FormMain_Load(object sender, EventArgs e) {
             RefreshMonitorList();
             RefreshEnabled();
+
             UpdateStatusBar(0);
+            UpdateTrackInformation();
 
             if (Settings.RestorePlaylists)
                 RestorePlaylists();
@@ -136,13 +139,18 @@
             SavePlaylists();
 
             Logger.Debug("Disposing players...");
-            foreach (IPlaylistPlayer player in players.Values)
-                player.Dispose();
+            foreach (IPlaylistPlayer player in players.Values) {
+                try {
+                    player.Dispose();
+                } catch (Exception ee) {
+                    Logger.Error(ee);
+                }
+            }
 
             Logger.Debug("Disposing libVLC...");
-            VlcMediaPlayer.LibVLC.Dispose();
+            Vlc.LibVLC.Dispose();
 
-            WindowsWallpaper.ResetDesktopBackground();
+            //        WindowsWallpaper.ResetDesktopBackground();
         }
 
         private IPlaylistPlayer GetPlayer(ScreenInfo info) {
@@ -171,13 +179,15 @@
         private void RefreshEnabled() {
             Logger.Trace("Refresh control enabled states...");
 
-            bool isAttached = CurrentPlayer?.IsAttached ?? false;
+            bool hasMedia = CurrentPlayer != null && CurrentPlayer.Media != null;
 
-            btnPlayPause.Enabled = isAttached || (!isAttached && (lbxPlaylist.SelectedItems.Count == 1 || lbxPlaylist.Items.Count == 1));
-            btnStop.Enabled = isAttached;
+            btnPlayPause.Enabled = hasMedia || (!hasMedia && lbxPlaylist.Items.Count > 0);
+            btnStop.Enabled = hasMedia;
 
-            timelineSlider.Enabled = isAttached;
-            volumeSlider.Enabled = isAttached;
+            timelineSlider.Enabled = hasMedia;
+            if (!timelineSlider.Enabled)
+                timelineSlider.Time = 0;
+            volumeSlider.Enabled = hasMedia;
 
             btnLoop.Enabled = btnShuffle.Enabled = openFileToolStripMenuItem.Enabled = openFolderToolStripMenuItem.Enabled = CurrentPlayer != null;
 
@@ -201,8 +211,10 @@
 
             TimeSpan current = TimeSpan.FromMilliseconds(duration.TotalMilliseconds * newTime);
             tsslTime.Text = Settings.ShowTimeLeft ? $"-{duration - current:hh':'mm':'ss} / {duration:hh':'mm':'ss}" : $"{current:hh':'mm':'ss} / {duration:hh':'mm':'ss}";
+        }
 
-            tsslCurrentTrack.Text = CurrentPlayer?.PlayingMedia?.Filepath ?? string.Empty;
+        private void UpdateTrackInformation() {
+            tsslCurrentTrack.Text = CurrentPlayer?.Media?.Filepath ?? string.Empty;
         }
 
 
@@ -302,45 +314,29 @@
                 btnLoop.Value = CurrentPlayer.LoopMode;
                 btnShuffle.Value = CurrentPlayer.ShuffleMode;
             }
+
             RefreshPlaylist();
+            RefreshEnabled();
         }
 
         #region Events
 
         private void CurrentPlayer_OnPositionChanged(object sender, float time) {
-            // Logger.Trace("CurrentPlayer_OnPositionChanged({0})",time);
+            timelineSlider.DisableNotify = true;
+            timelineSlider.Time = time;
+            timelineSlider.DisableNotify = false;
 
-            Action action = () => {
-                timelineSlider.DisableNotify = true;
-                timelineSlider.Time = time;
-                timelineSlider.DisableNotify = false;
-                UpdateStatusBar(time);
-            };
-
-            if (InvokeRequired) {
-                timelineSlider.Invoke(action);
-            } else {
-                action();
-            }
+            UpdateStatusBar(time);
         }
 
         private void CurrentPlayer_OnChange(object sender, EventArgs e) {
-            // Logger.Trace("CurrentPlayer_OnChange()" );
+            RefreshPlaylist();
+            RefreshEnabled();
+            UpdateTrackInformation();
 
-            Action action = () => {
-                RefreshPlaylist();
-                RefreshEnabled();
-                
-                volumeSlider.DisableNotify = true;
-                volumeSlider.Volume = (CurrentPlayer.Volume / 100f);
-                volumeSlider.DisableNotify = false;
-            };
-
-            if (InvokeRequired) {
-                Invoke(action);
-            } else {
-                action();
-            }
+            volumeSlider.DisableNotify = true;
+            volumeSlider.Volume = (CurrentPlayer.Volume / 100f);
+            volumeSlider.DisableNotify = false;
         }
 
         private void FormMain_OnTrayEntered(object sender, EventArgs e) {
@@ -391,10 +387,14 @@
 
         private void btnPlayPause_Click(object sender, EventArgs e) {
 
-            PlaylistItem item = SelectedPlaylistItem;
+            IPlaylistItem item = SelectedPlaylistItem;
+
+            if (!CurrentPlayer.IsPlaying && item == null && lbxPlaylist.Items.Count > 0)
+                item = CurrentPlayer.Playlist.Items[0];
 
 
-            if (!CurrentPlayer.IsAttached && item != null) { // No media loaded.
+
+            if (CurrentPlayer.Media == null && item != null) { // No media loaded.
                 CurrentPlayer.Play(item);
 
             } else if (!CurrentPlayer.IsEnded) {

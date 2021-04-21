@@ -5,14 +5,18 @@
     using System.IO;
     using HeyRed.Mime;
     using Maxstupo.DynamicPaper.Controls;
+    using Maxstupo.DynamicPaper.Wallpaper.Players;
     using Newtonsoft.Json;
 
-    public sealed class PlaylistItem : IEquatable<PlaylistItem> {
+    public sealed class PlaylistItem : IPlaylistItem, IEquatable<PlaylistItem> {
 
         [JsonProperty]
         public string Filepath { get; private set; }
 
-        public int Volume { get; set; } = 100;
+        public int PreferredVolume { get; set; } = 100;
+
+        [JsonIgnore]
+        public int PlaylistIndex { get; set; }
 
         [JsonIgnore]
         [ListBoxItemDisplayText]
@@ -20,7 +24,7 @@
 
         [JsonIgnore]
         [ListBoxItemHighlighting]
-        public bool IsPlaying { get; set; } = false;
+        public bool IsLoaded { get; set; } = false;
 
         [JsonIgnore]
         public string MimeType => MimeTypesMap.GetMimeType(Filepath);
