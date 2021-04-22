@@ -16,9 +16,11 @@
             Layout = layout ?? throw new ArgumentNullException(nameof(layout));
 
             Id = GL.GenBuffer();
+            Logger.Trace("Generated buffer: {0}", Id);
 
             Bind();
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(uint), data, usage);
+            Logger.Trace("Set buffer data: {1} bytes ({0})", usage, data.Length * sizeof(uint));
             Unbind();
         }
 
@@ -26,9 +28,11 @@
             Layout = layout ?? throw new ArgumentNullException(nameof(layout));
 
             Id = GL.GenBuffer();
+            Logger.Trace("Generated buffer: {0}", Id);
 
             Bind();
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, usage);
+            Logger.Trace("Set buffer data: {1} bytes ({0})", usage, data.Length * sizeof(float));
             Unbind();
         }
 
@@ -46,6 +50,7 @@
         public void Dispose() {
             if (IsDisposed)
                 return;
+            Logger.Trace("Disposing...");
 
             Unbind();
             GL.DeleteBuffer(Id);
@@ -54,5 +59,6 @@
         }
 
     }
+
 
 }

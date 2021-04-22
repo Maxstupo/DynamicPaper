@@ -22,6 +22,13 @@
     }
 
     public sealed class VertexBufferLayout : IEnumerable<VertexBufferItem> {
+        public static readonly VertexBufferLayout Float3 = new VertexBufferLayout {
+            { VertexAttribPointerType.Float, 3 }
+        };
+        public static readonly VertexBufferLayout Float3_2 = new VertexBufferLayout {
+            { VertexAttribPointerType.Float, 3 },
+            { VertexAttribPointerType.Float, 2 }
+        };
 
         private readonly List<VertexBufferItem> items = new List<VertexBufferItem>();
         public IReadOnlyList<VertexBufferItem> Items => items.AsReadOnly();

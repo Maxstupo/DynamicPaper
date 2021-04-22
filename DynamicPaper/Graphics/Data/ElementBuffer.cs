@@ -1,5 +1,4 @@
 ﻿namespace Maxstupo.DynamicPaper.Graphics.Data {
-    
     using System;
     using OpenTK.Graphics.OpenGL4;
 
@@ -12,6 +11,7 @@
 
         public ElementBuffer(uint[] data, BufferUsageHint usage) {
             Id = GL.GenBuffer();
+            Logger.Trace("Generated buffer: {0}", Id);
 
             Bind();
             GL.BufferData(BufferTarget.ElementArrayBuffer, data.Length * sizeof(uint), data, usage);
@@ -32,6 +32,7 @@
         public void Dispose() {
             if (IsDisposed)
                 return;
+            Logger.Trace("Disposing...");
 
             Unbind();
             GL.DeleteBuffer(Id);
@@ -40,5 +41,6 @@
         }
 
     }
+
 
 }

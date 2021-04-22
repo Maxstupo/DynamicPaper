@@ -59,12 +59,18 @@
                 View = CreateView(screen);
                 originalParent = WindowsWallpaper.GetParent(View);
             }
-
+       
             View.Show();
+
             View.Bounds = WindowsWallpaper.GetScreenBounds(screen);
 
-            WindowsWallpaper.SetParent(View);
+           WindowsWallpaper.SetParent(View);
+
+            Test();
         }
+
+        public virtual void Test() { }
+
 
         public void Detach() {
             if (!IsAttached)

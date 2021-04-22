@@ -23,8 +23,12 @@
             int vertexShaderId = CompileShader(ShaderType.VertexShader, vertexSource);
             int fragmentShaderId = CompileShader(ShaderType.FragmentShader, fragmentSource);
 
+        
+
             /* Create our shader program & link our shaders. */
             Id = GL.CreateProgram();
+            Logger.Trace("Created shader program: {0}", Id);
+
             GL.AttachShader(Id, vertexShaderId);
             GL.AttachShader(Id, fragmentShaderId);
             GL.LinkProgram(Id);
@@ -44,6 +48,7 @@
         }
 
         private int CompileShader(ShaderType type, string source) {
+            Logger.Trace("Compiling {0} shader...", type);
 
             int id = GL.CreateShader(type);
 
@@ -123,25 +128,26 @@
             GL.Uniform3(location, array.Length, arr);
         }
 
-        public int GetUniformLocation(string name) {
-            if (cachedUniformLocations.TryGetValue(name, out int location))  // Return cached location, if exists.
+        public int GetUniformLocation(string uniformName) {
+            if (cachedUniformLocations.TryGetValue(uniformName, out int location))  // Return cached location, if exists.
                 return location;
 
             // Get location and update cache.
-            location = GL.GetUniformLocation(Id, name);
+            location = GL.GetUniformLocation(Id, uniformName);
 
             if (location == -1)
-                Logger.Warn($"[Shader#{Id}] Uniform '{name}' doesn't exist!");
+                Logger.Warn("[Shader #{0} - {1}] Uniform '{2}' doesn't exist!", Id, Name, uniformName);
             else
-                Logger.Debug($"[Shader#{Id}] Cached uniform location: '{name}' -> {location}");
+                Logger.Trace("[Shader #{0} - {1}] Cached uniform location: '{2}' -> {3}", Id, Name, uniformName, location);
 
-            cachedUniformLocations.Add(name, location);
+            cachedUniformLocations.Add(uniformName, location);
             return location;
         }
 
         public void Dispose() {
             if (IsDisposed)
                 return;
+            Logger.Trace("Disposing...");
 
             Unbind();
             GL.DeleteProgram(Id);

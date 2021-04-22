@@ -5,6 +5,7 @@
     using System.Windows.Forms;
     using Maxstupo.DynamicPaper.Utility;
     using OpenTK;
+    using OpenTK.Graphics.OpenGL4;
 
     public abstract class OpenGLPlayer : AttachablePlayer<GLControl> {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -36,14 +37,20 @@
         private GLControl glControl;
         private Thread thread;
 
+        private bool glControlResized = false;
+
         public override GLControl CreateView(Screen screen) {
             glControl = new GLControl {
                 VSync = false
             };
+
+            glControl.MakeCurrent();
+            {
+                Init();
+            }
             glControl.Context.MakeCurrent(null);
 
             glControl.Resize += GlControl_Resize;
-            glControl.Paint += delegate { Render(); };
 
             thread = new Thread(Run);
             thread.Start();
@@ -53,15 +60,15 @@
 
 
         private void Run() {
+            glControl.MakeCurrent();
+            glControlResized = true;
+
+
             float optimalTime = 1000 / TargetFps;
             long lastLoopTime = TimeUtils.CurrentTimeMilliseconds;
             long lastFpsTime = 0;
             long lastNotifyPositionChanged = 0;
             int fps = 0;
-
-            glControl.Context.MakeCurrent(glControl.WindowInfo);
-
-            Init();
 
             while (IsAttached) {
                 long elapsedTime = TimeUtils.CurrentTimeMilliseconds - lastLoopTime;
@@ -86,11 +93,23 @@
                     lastNotifyPositionChanged = 0;
                 }
 
-
                 if (lastFpsTime >= 1000) {
                     Fps = fps;
                     lastFpsTime = 0;
                     fps = 0;
+                    Logger.Trace("FPS: {0}", Fps);
+                }
+
+
+
+                if (glControlResized) {
+                    glControlResized = false;
+
+                    float ratio = (float) glControl.Width / glControl.Height;
+
+                    Logger.Trace("Resize: {0}x{1} ({2})", glControl.Width, glControl.Height, ratio);
+
+                    OnResized(glControl.Width, glControl.Height, ratio);
                 }
 
                 if (IsPlaying) {
@@ -144,13 +163,8 @@
         }
 
         private void GlControl_Resize(object sender, EventArgs e) {
-            if (glControl != null) {
-                float ratio = (float) glControl.ClientSize.Width / glControl.ClientSize.Height;
-
-                Logger.Trace("Resize: {0}x{1} ({2})", glControl.ClientSize.Width, glControl.ClientSize.Height, ratio);
-
-                OnResized(glControl.ClientSize.Width, glControl.ClientSize.Height, ratio);
-            }
+            if (glControl != null)
+                glControlResized = true;
         }
 
         protected override void Dispose(bool disposing) {

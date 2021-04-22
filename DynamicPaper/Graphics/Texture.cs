@@ -6,6 +6,7 @@
     using OpenTK.Graphics.OpenGL4;
 
     public sealed class Texture : IBindable {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public int Id { get; }
 
@@ -58,9 +59,11 @@
 
         public Texture(string path) {
             Id = GL.GenTexture();
+            Logger.Trace("Created texture: {0}", Id);
 
             Bind();
 
+            Logger.Trace("Load image data: {0}", path);
             using (Bitmap image = new Bitmap(path)) {
                 BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -80,6 +83,7 @@
 
         public Texture(int width, int height) {
             Id = GL.GenTexture();
+            Logger.Trace("Created texture: {0}", Id);
 
             Bind();
 
@@ -118,6 +122,7 @@
         public void Dispose() {
             if (IsDisposed)
                 return;
+            Logger.Trace("Disposing...");
 
             Unbind();
             GL.DeleteTexture(Id);

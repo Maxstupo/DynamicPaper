@@ -1,5 +1,5 @@
 ﻿namespace Maxstupo.DynamicPaper.Graphics.Data {
-  
+
     using System;
     using System.Collections.Generic;
     using OpenTK.Graphics.OpenGL4;
@@ -13,6 +13,7 @@
 
         public VertexArray() {
             Id = GL.GenVertexArray();
+            Logger.Trace("Generated vertex array: {0}", Id);
         }
 
         public VertexArray(VertexBuffer vbo, ElementBuffer ebo = null) : this() {
@@ -21,6 +22,8 @@
 
         // Associates the VBO (and optional EBO) with this VAO.
         public void Link(VertexBuffer vbo, ElementBuffer ebo = null) {
+            Logger.Trace("Linking VBO{0}", (ebo != null) ? " and EBO..." : "...");
+
             Bind();
             vbo.Bind();
             ebo?.Bind();
@@ -62,6 +65,7 @@
         public void Dispose() {
             if (IsDisposed)
                 return;
+            Logger.Trace("Disposing...");
 
             Unbind();
             GL.DeleteVertexArray(Id);
@@ -70,5 +74,6 @@
         }
 
     }
+
 
 }
