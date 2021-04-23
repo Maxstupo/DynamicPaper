@@ -7,7 +7,7 @@ xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\%CONFIGURATION%" "DynamicPaper_%
 7z a "DynamicPaper.zip" "%outputFolder%"
 
 REM copy the stpack utility
-copy "%APPVEYOR_BUILD_FOLDER%\ShaderToyPacker\bin\$(CONFIGURATION)\stpack.exe" "stpack.exe"
+xcopy "%APPVEYOR_BUILD_FOLDER%\ShaderToyPacker\bin\$(CONFIGURATION)\stpack.exe" "%APPVEYOR_BUILD_FOLDER%\stpack.exe" /E
 
 REM make installer, if develop branch - remove version information from output filename
 set "PATH=%PATH%;C:\Program Files (x86)\Inno Setup 6"   
