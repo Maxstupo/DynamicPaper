@@ -3,6 +3,8 @@
     using System;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using System.IO;
+    using Maxstupo.DynamicPaper.Utility;
     using OpenTK.Graphics.OpenGL4;
 
     public sealed class Texture : IBindable {
@@ -57,17 +59,19 @@
 
         public bool IsDisposed { get; private set; }
 
-        public Texture(string path) {
+        public Texture(byte[] fileData) {
             Id = GL.GenTexture();
             Logger.Trace("Created texture: {0}", Id);
 
             Bind();
 
-            Logger.Trace("Load image data: {0}", path);
-            using (Bitmap image = new Bitmap(path)) {
-                BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Logger.Trace("Load image data...");
+            using (MemoryStream ms = new MemoryStream(fileData)) {
+                using (Bitmap image = new Bitmap(ms)) {
+                    BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                }
             }
 
             MinFilter = TextureMinFilter.Linear;
@@ -96,6 +100,12 @@
             WrapT = TextureWrapMode.Repeat;
 
             Unbind();
+        }
+
+        public static Texture FromFile(string filepath) {
+            Logger.Trace("Loading texture from {0}", filepath);
+            using (Stream stream = File.OpenRead(filepath))
+                return new Texture(stream.ReadAllBytes());
         }
 
         public void Bind() {

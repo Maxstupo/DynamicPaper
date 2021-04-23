@@ -5,9 +5,10 @@
 
     public interface IResourceProvider : IDisposable {
 
-        FrameBuffer GetBuffer(Pass pass);
+        FrameBuffer GetFrameBuffer(int bufferId);
 
         Texture LoadTexture(string value);
+        Texture LoadTexture(string name, byte[] data);
 
     }
 

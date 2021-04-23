@@ -49,6 +49,8 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -118,11 +120,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="ShaderToy\IResourceProvider.cs" />
-    <Compile Include="ShaderToy\Pass.cs" />
+    <Compile Include="ShaderToy\RenderTarget.cs" />
     <Compile Include="ShaderToy\Renderer.cs" />
     <Compile Include="ShaderToy\RenderInput.cs" />
+    <Compile Include="ShaderToy\RenderOutput.cs" />
     <Compile Include="ShaderToy\RenderPass.cs" />
     <Compile Include="ShaderToy\RenderData.cs" />
+    <Compile Include="Utility\Extensions.cs" />
     <Compile Include="Utility\SettingsManager.cs" />
     <Compile Include="Utility\FileFilterBuilder.cs" />
     <Compile Include="Utility\ScreenInfo.cs" />
@@ -183,18 +187,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\Shaders\space.fs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Shaders\fire.fs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Shaders\fractal.fs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Shaders\supernova_remnant.shadertoy.fs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LibVLCSharp.WinForms">
@@ -233,15 +225,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DynamicPaper.ico" />
-    <Content Include="Resources\Textures\black.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Textures\bw_64_noise.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Textures\rgba_256_noise.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,6 @@
     using System.Windows.Forms;
     using Maxstupo.DynamicPaper.Utility;
     using OpenTK;
-    using OpenTK.Graphics.OpenGL4;
 
     public abstract class OpenGLPlayer : AttachablePlayer<GLControl> {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -58,9 +57,8 @@
             return glControl;
         }
 
-
         private void Run() {
-            glControl.MakeCurrent();
+                glControl.MakeCurrent();
             glControlResized = true;
 
 
@@ -97,10 +95,8 @@
                     Fps = fps;
                     lastFpsTime = 0;
                     fps = 0;
-                    Logger.Trace("FPS: {0}", Fps);
+                    // Logger.Trace("FPS: {0}", Fps);
                 }
-
-
 
                 if (glControlResized) {
                     glControlResized = false;
@@ -108,16 +104,17 @@
                     float ratio = (float) glControl.Width / glControl.Height;
 
                     Logger.Trace("Resize: {0}x{1} ({2})", glControl.Width, glControl.Height, ratio);
-
-                    OnResized(glControl.Width, glControl.Height, ratio);
+                  
+                        OnResized(glControl.Width, glControl.Height, ratio);
                 }
 
                 if (IsPlaying) {
                     Time += elapsedTime;
                     Update(delta);
 
-                    Render();
-                    glControl.SwapBuffers();
+                        Render();
+                        glControl.SwapBuffers();
+                    
                 }
 
                 int sleep = (int) (lastLoopTime - TimeUtils.CurrentTimeMilliseconds + optimalTime);

@@ -3,10 +3,74 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using Maxstupo.DynamicPaper.Graphics;
     using Maxstupo.DynamicPaper.Graphics.Data;
     using OpenTK.Graphics.OpenGL4;
+
+    public class RenderPassBuilder {
+        private readonly string name;
+        private readonly string vertexShader;
+        private readonly string fragmentShader;
+
+        private string fragmentShaderHeader;
+        private string fragmentShaderFooter;
+
+
+        private readonly List<RenderInput> inputs = new List<RenderInput>();
+        private readonly ISet<RenderOutput> outputs = new HashSet<RenderOutput>();
+
+        private RenderPassBuilder(string name, string vertexCode, string fragmentCode) {
+            this.name = name;
+            this.vertexShader = vertexCode;
+            this.fragmentShader = fragmentCode;
+        }
+
+        public static RenderPassBuilder FromFile(string name, string vertexCode, string filepath) {
+            return new RenderPassBuilder(name, vertexCode, File.ReadAllText(filepath));
+        }
+
+        public static RenderPassBuilder FromString(string name, string vertexCode, string source) {
+            return new RenderPassBuilder(name, vertexCode, source);
+        }
+
+        public RenderPassBuilder AddTextureInput(int channel, string filepath) {
+            inputs.Add(new RenderInput(channel, filepath));
+            return this;
+        }
+
+        public RenderPassBuilder AddTextureInput(int channel,string name, byte[] textureData) {
+            inputs.Add(new RenderInput(channel,name, textureData));
+            return this;
+        }
+
+        public RenderPassBuilder AddBufferInput(int channel, int bufferId) {
+            inputs.Add(new RenderInput(channel, bufferId));
+            return this;
+        }
+
+        public RenderPassBuilder AddBufferInput(int channel, RenderTarget renderTarget) {
+            return AddBufferInput(channel, (int) renderTarget);
+        }
+
+        public RenderPassBuilder AddOutput(int bufferId) {
+            outputs.Add(new RenderOutput(bufferId));
+            return this;
+        }
+
+        public RenderPassBuilder AddOutput(RenderTarget renderTarget) {
+            return AddOutput((int) renderTarget);
+        }
+
+        public RenderPass Create() {
+            if (outputs.Count == 0)
+                throw new InvalidOperationException("Render pass must have at least one output!");
+            return new RenderPass(name, vertexShader, fragmentShader, inputs.ToArray(), outputs.ToArray());
+        }
+
+    }
+
 
     public sealed class RenderPass : IDisposable {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -33,7 +97,7 @@
             "   mainImage(gl_FragColor.xyzw, gl_FragCoord.xy);\n" +
             "}";
 
-        public string VertexShader { get; set; } =
+        public static readonly string DefaultVertexShader =
             "#version 330 core\n" +
             "precision mediump float;\n" +
             "precision mediump int;\n" +
@@ -49,16 +113,20 @@
         private Shader shader;
         private readonly Dictionary<int, Texture> textures = new Dictionary<int, Texture>();
 
+        private readonly string vertexCode;
         private readonly string fragmentCode;
-        private readonly RenderInput[] inputs;
 
-        public RenderPass(string fragmentCode, params RenderInput[] inputs) {
+        public string Name { get; }
+
+        public RenderInput[] Inputs { get; }
+        public RenderOutput[] Outputs { get; }
+
+        public RenderPass(string name, string vertexCode, string fragmentCode, RenderInput[] inputs, RenderOutput[] outputs) {
+            this.Name = name;
+            this.vertexCode = vertexCode;
             this.fragmentCode = fragmentCode;
-            this.inputs = inputs;
-        }
-
-        public static RenderPass FromFile(string filepath, params RenderInput[] inputs) {
-            return new RenderPass(File.ReadAllText(filepath), inputs);
+            this.Inputs = inputs;
+            this.Outputs = outputs;
         }
 
         public void Init(IResourceProvider provider, string commonFragmentCode = null) {
@@ -69,15 +137,16 @@
             sb.Append(FragmentShaderHeader);
 
             if (!string.IsNullOrEmpty(commonFragmentCode))
-                sb.Append(commonFragmentCode);
+                sb.Append('\n').Append(commonFragmentCode).Append('\n');
 
-            foreach (RenderInput renderInput in inputs) {
+
+            foreach (RenderInput renderInput in Inputs) {
                 int channel = renderInput.Channel;
 
                 sb.Append($"uniform sampler2D iChannel{channel};\n");
 
                 if (renderInput.Type == InputType.Texture) {
-                    Texture texture = provider.LoadTexture(renderInput.Value);
+                    Texture texture = renderInput.Data != null ? provider.LoadTexture(renderInput.Filepath, renderInput.Data) : provider.LoadTexture(renderInput.Filepath);
                     textures.Add(channel, texture);
                 }
             }
@@ -85,37 +154,31 @@
             sb.Append(fragmentCode);
             sb.Append(FragmentShaderFooter);
 
-            shader = new Shader(string.Empty, VertexShader, sb.ToString());
+            shader = new Shader(string.Empty, vertexCode, sb.ToString());
         }
 
-        public void Render(VertexArray vao, int indiceCount, ref RenderData data, IResourceProvider provider) {
-            if (shader == null) return;
+        public void Render(VertexArray vao, int indiceCount, RenderData data, IResourceProvider provider) {
 
             foreach (KeyValuePair<int, Texture> pair in textures) // Bind textures 
                 pair.Value.Bind(pair.Key);
 
-            foreach (RenderInput renderInput in inputs) { // Bind the framebuffer textures.
-                if (renderInput.Type != InputType.Buffer)
-                    continue;
 
-                FrameBuffer fb = provider.GetBuffer(renderInput.Pass);
-                if (fb != null)
-                    fb.Texture.Bind(renderInput.Channel);
-            }
-
-
-            shader.Bind();
+            BindFrameBufferTextures(provider, true);
             {
-                SetUniformValues(ref data);
-
-                vao.Bind();
+                shader.Bind();
                 {
-                    GL.DrawElements(PrimitiveType.Triangles, indiceCount, DrawElementsType.UnsignedInt, 0);
-                }
-                vao.Unbind();
+                    SetUniformValues(data);
 
+                    vao.Bind();
+                    {
+                        GL.DrawElements(PrimitiveType.Triangles, indiceCount, DrawElementsType.UnsignedInt, 0);
+                    }
+                    vao.Unbind();
+
+                }
+                shader.Unbind();
             }
-            shader.Unbind();
+            BindFrameBufferTextures(provider, false);
 
 
             foreach (Texture texture in textures.Values)
@@ -123,7 +186,26 @@
 
         }
 
-        public void SetUniformValues(ref RenderData input) {
+        private void BindFrameBufferTextures(IResourceProvider provider, bool bind) {
+            foreach (RenderInput renderInput in Inputs) {
+                if (renderInput.Type != InputType.Buffer)
+                    continue;
+
+                FrameBuffer frameBuffer = provider.GetFrameBuffer(renderInput.BufferId);
+                if (frameBuffer == null)
+                    continue;
+
+                if (bind) {
+                    frameBuffer.Texture.Bind(renderInput.Channel);
+                } else {
+                    frameBuffer.Texture.Unbind();
+                }
+
+            }
+
+        }
+
+        public void SetUniformValues(RenderData input) {
             shader.SetUniform("iResolution", input.iResolution);
             shader.SetUniform("iTime", input.iTime);
             shader.SetUniform("iGlobalTime", input.iGlobalTime);

@@ -2,8 +2,11 @@
 
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using Maxstupo.DynamicPaper.Graphics;
     using Maxstupo.DynamicPaper.Graphics.Data;
+    using Maxstupo.DynamicPaper.Utility;
     using OpenTK.Graphics.OpenGL4;
 
     public sealed class Renderer : IResourceProvider {
@@ -27,18 +30,29 @@
         private VertexArray vao;
         private ElementBuffer ebo;
 
-        private readonly Dictionary<Pass, RenderPass> renderPasses = new Dictionary<Pass, RenderPass>();
-        private readonly Dictionary<Pass, FrameBuffer> buffers = new Dictionary<Pass, FrameBuffer>();
+        private readonly Dictionary<int, RenderPass> renderPasses = new Dictionary<int, RenderPass>();
+        private readonly Dictionary<int, FrameBuffer> frameBuffers = new Dictionary<int, FrameBuffer>();
 
         private readonly Dictionary<string, Texture> textures = new Dictionary<string, Texture>();
 
-        private RenderPass imagePass;
-
         public string SharedFragmentCode { get; set; }
 
-        public Renderer() {
-
+        private int displayOutputBufferId;
+        public int DisplayOutputBufferId {
+            get => displayOutputBufferId;
+            set {
+                displayOutputBufferId = value;
+                displayOutputRenderPassId = renderPasses.Where(x => x.Value.Outputs.Any(v => v.BufferId == value)).Select(x => x.Key).FirstOrDefault();
+            }
         }
+
+        private int displayOutputRenderPassId;
+
+        public Renderer(int outputBufferId) {
+            this.DisplayOutputBufferId = outputBufferId;
+        }
+
+        public Renderer(RenderTarget displayRenderTarget) : this((int) displayRenderTarget) { }
 
         public void Init() {
             Logger.Debug("Initializing...");
@@ -53,92 +67,120 @@
 
             vao = new VertexArray(vbo, ebo);
 
+            InitPasses();
+        }
 
-            foreach (KeyValuePair<Pass, RenderPass> pair in renderPasses) {
-                Pass pass = pair.Key;
-                RenderPass renderPass = pair.Value;
+        public void InitPasses() {
+            Logger.Debug("Initializing passes...");
+
+            foreach (RenderPass renderPass in renderPasses.Values) {
 
                 renderPass.Init(this, SharedFragmentCode);
-                buffers.Add(pass, new FrameBuffer(800, 450));
-            }
 
-            imagePass.Init(this, SharedFragmentCode);
-        }
+                foreach (RenderOutput output in renderPass.Outputs) {
+                    if (output.BufferId == DisplayOutputBufferId) // We dont need a frame buffer for the actual "output"
+                        continue;
 
-        public void Add(Pass pass, RenderPass renderPass) {
-            if (pass == Pass.Image) {
-                if (imagePass != null)
-                    throw new ArgumentException("Only one Image pass is allowed.");
-                imagePass = renderPass;
-                Logger.Debug("Setting image pass...");
-            } else {
-                Logger.Debug("Setting render pass {0}", pass);
-                renderPasses.Add(pass, renderPass);
+                    if (!frameBuffers.ContainsKey(output.BufferId))
+                        frameBuffers.Add(output.BufferId, new FrameBuffer(800, 450));
+                }
             }
         }
 
-        public FrameBuffer GetBuffer(Pass pass) {
-            return buffers.TryGetValue(pass, out FrameBuffer buffer) ? buffer : null;
+        public void Clear() {
+            DisposePasses();
+
+        }
+
+        public void Add(RenderPass renderPass) {
+            renderPasses.Add(renderPass.Name.GetHashCode(), renderPass);
+        }
+
+        public FrameBuffer GetFrameBuffer(int bufferId) {
+            return frameBuffers.TryGetValue(bufferId, out FrameBuffer buffer) ? buffer : null;
         }
 
         public Texture LoadTexture(string filepath) {
             if (textures.TryGetValue(filepath, out Texture texture))
                 return texture;
-            Logger.Debug("Loading texture: {0}", filepath);
 
-            texture = new Texture(filepath);
-            textures.Add(filepath, texture);
+            using (Stream stream = File.OpenRead(filepath))
+                return LoadTexture(filepath, stream.ReadAllBytes());
+        }
+
+        public Texture LoadTexture(string name, byte[] data) {
+            if (textures.TryGetValue(name, out Texture texture))
+                return texture;
+
+            Logger.Debug("Loading texture: {0}", name);
+
+            texture = new Texture(data);
+            textures.Add(name, texture);
             return texture;
         }
 
+        public void Render(RenderData data) {
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        public void Render(float deltaTime, ref RenderData data) {
+            foreach (KeyValuePair<int, RenderPass> rp in renderPasses) {
+                RenderPass renderPass = rp.Value;
 
-            foreach (KeyValuePair<Pass, RenderPass> pair in renderPasses) {
+                bool isOutputPass = rp.Key == displayOutputRenderPassId;
 
-                buffers[pair.Key].Bind();
-                {
-                    pair.Value.Render(vao, indices.Length, ref data, this);
+
+                if (!isOutputPass) {
+                    foreach (RenderOutput output in renderPass.Outputs)
+                        frameBuffers[output.BufferId].Bind();
                 }
-                buffers[pair.Key].Unbind();
+
+                renderPass.Render(vao, indices.Length, data, this);
+
+                if (!isOutputPass) {
+                    foreach (RenderOutput output in renderPass.Outputs)
+                        frameBuffers[output.BufferId].Unbind();
+                }
 
             }
 
-            imagePass.Render(vao, indices.Length, ref data, this);
         }
 
         public void RecreateBuffers(int newWidth, int newHeight) {
             Logger.Debug("Recreate buffers: {0}x{1}", newWidth, newHeight);
 
-            foreach (KeyValuePair<Pass, FrameBuffer> pair in new Dictionary<Pass, FrameBuffer>(buffers)) {
+            foreach (KeyValuePair<int, FrameBuffer> pair in new Dictionary<int, FrameBuffer>(frameBuffers)) {
                 pair.Value.Dispose();
-
-                buffers[pair.Key] = new FrameBuffer(newWidth, newHeight);
+                frameBuffers[pair.Key] = new FrameBuffer(newWidth, newHeight);
             }
         }
 
 
-
-
-        public void Dispose() {
-            Logger.Debug("Disposing...");
+        public void DisposePasses() {
+            Logger.Debug("Disposing passes...");
 
             foreach (RenderPass renderPass in renderPasses.Values)
                 renderPass.Dispose();
 
-            imagePass.Dispose();
-
-            foreach (FrameBuffer frameBuffer in buffers.Values)
+            foreach (FrameBuffer frameBuffer in frameBuffers.Values)
                 frameBuffer.Dispose();
-
-            vao.Dispose();
-            vbo.Dispose();
-            ebo.Dispose();
 
             foreach (Texture texture in textures.Values)
                 texture.Dispose();
 
+            renderPasses.Clear();
+            frameBuffers.Clear();
+            textures.Clear();
         }
+
+        public void Dispose() {
+            Logger.Debug("Disposing...");
+
+            DisposePasses();
+
+            vao.Dispose();
+            vbo.Dispose();
+            ebo.Dispose();
+        }
+
 
     }
 
