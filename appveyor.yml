@@ -66,5 +66,5 @@ for:
     name: $(CONFIGURATION)_Build
   - path: 'DynamicPaper-Setup.exe'
     name: $(CONFIGURATION)-Setup_Build
-  - path: 'ShaderToyPacker/bin/Release/stpack.exe'
+  - path: 'stpack.exe'
     name: stpack-$(CONFIGURATION)_Build
