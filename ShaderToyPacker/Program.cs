@@ -1,5 +1,5 @@
 ﻿namespace ShaderToyPack {
-    
+
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using CommandLine;
     using Maxstupo.ShaderToyPack;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -36,17 +37,17 @@
            "}";
 
 
-        private static void PackUrl(string url, string apiKey) {
+        private static void PackUrl(string url, string apiKey, string outputFilename = null, string outputDirectory = null, string vertexShader = null, bool overwriteOutput = true) {
             Match match = UrlRegex.Match(url);
             if (match.Success) {
                 string id = match.Groups[1].Value.Trim();
-                Pack(id, apiKey);
+                Pack(id, apiKey, outputFilename, outputDirectory, vertexShader, overwriteOutput);
             } else {
                 Logger.Error("Failed to extract ID from URL '{0}'", url);
             }
         }
 
-        private static void Pack(string id, string apiKey, string outputFilename = null, bool overrideOutput = true) {
+        private static void Pack(string id, string apiKey, string outputFilename = null, string outputDirectory = null, string vertexShader = null, bool overrideOutput = true) {
             string apiUrl = ApiUrl.Replace("{id}", id).Replace("{apiKey}", apiKey);
             string json = Http.Get(apiUrl);
 
@@ -76,7 +77,7 @@
 
                 // Write default vertex shader.
                 Logger.Info("Writing shared vertex shader...");
-                File.WriteAllText(Path.Combine(tempDirectory, $"shared.vs.glsl"), DefaultVertexShader, Encoding.UTF8);
+                File.WriteAllText(Path.Combine(tempDirectory, $"shared.vs.glsl"), vertexShader, Encoding.UTF8);
 
                 // Write render passes.
                 Logger.Info("Writing render passes...");
@@ -181,8 +182,13 @@
 
                 if (string.IsNullOrEmpty(outputFilename))
                     outputFilename = $"{Util.MakeValidFileName(root["info"]["name"].Value<string>())}.{packExtension}";
+                else
+                    outputFilename = $"{outputFilename}.{packExtension}";
 
-                string zipFile = Path.Combine(Directory.GetCurrentDirectory(), outputFilename);
+                if (outputDirectory == null || !Directory.Exists(outputDirectory))
+                    outputDirectory = Directory.GetCurrentDirectory();
+
+                string zipFile = Path.Combine(outputDirectory, outputFilename);
                 if (File.Exists(zipFile)) {
                     if (overrideOutput) {
                         Logger.Warn("Overwriting output pack file '{0}'", outputFilename);
@@ -202,16 +208,27 @@
         }
 
 
-        static void Main(string[] args) {
-            string url = "https://www.shadertoy.com/view/MdKXzc";
-            string apiKey = "BdrtMn";
+        static int Main(string[] args) {
 
-            PackUrl(url, apiKey);
+            return Parser.Default.ParseArguments<Options>(args).MapResult(
+                options => Run(options),
+                _ => -1
+            );
 
-            Console.ReadKey();
         }
 
+        private static int Run(Options options) {
+            string vertexShader = DefaultVertexShader;
 
+            if (options.VertexShaderFilepath != null && File.Exists(options.VertexShaderFilepath))
+                vertexShader = File.ReadAllText(options.VertexShaderFilepath, Encoding.UTF8);
+
+            PackUrl(options.Url, options.ApiKey ?? PublicApiKey, options.Filename, options.Directory, vertexShader, options.OverwriteOutput);
+
+            //Console.ReadKey();
+            return 0;
+        }
 
     }
+
 }
