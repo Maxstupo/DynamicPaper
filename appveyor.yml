@@ -42,14 +42,19 @@ for:
   configuration: Release
 
   deploy:
-    description: 'DynamicPaper Installer'
-    artifact: /.*\.exe/
+    artifact: /*\.exe/
     auth_token:
       secure: FvYSkn+t71h71KQJ3v63HzNcxv7Hv9rpqQiQ/Zdly9h87M3VmB2WexbixZg1EDIq
     draft: true
     provider: GitHub
     on:
       appveyor_repo_tag: true
+
+  artifacts:
+  - path: 'DynamicPaper-Setup_v$(APPVEYOR_BUILD_VERSION).exe'
+    name: $(CONFIGURATION)-Setup_Build
+  - path: 'stpack.exe'
+    name: stpack-$(CONFIGURATION)_Build
 
 # config for develop branch
 #
