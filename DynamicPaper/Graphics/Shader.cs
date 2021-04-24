@@ -2,6 +2,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using OpenTK;
     using OpenTK.Graphics.OpenGL4;
 
@@ -23,7 +24,7 @@
             int vertexShaderId = CompileShader(ShaderType.VertexShader, vertexSource);
             int fragmentShaderId = CompileShader(ShaderType.FragmentShader, fragmentSource);
 
-        
+
 
             /* Create our shader program & link our shaders. */
             Id = GL.CreateProgram();
@@ -61,6 +62,10 @@
             if (value == 0) {
                 string infoLog = GL.GetShaderInfoLog(id);
                 Logger.Error("{0} - COMPILATION_FAILED {1}\n{2}", type, Name, infoLog);
+
+                string dumpFilepath = Path.Combine(Path.GetTempPath(), $"{Path.GetRandomFileName()}.glsl");
+                File.WriteAllText(dumpFilepath, source);
+                Logger.Error("Source Dump: {0}", dumpFilepath);
             }
 
             return id;
