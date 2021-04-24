@@ -4,6 +4,8 @@ REM Copy build files into outputFolder
 mkdir "%outputFolder%"
 xcopy "%APPVEYOR_BUILD_FOLDER%\DynamicPaper\bin\%CONFIGURATION%" "DynamicPaper_%CONFIGURATION%_v%APPVEYOR_BUILD_VERSION%" /E /C
 
+echo Config: "%CONFIGURATION%"
+
 7z a "DynamicPaper.zip" "%outputFolder%"
 
 REM copy the stpack utility
