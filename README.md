@@ -20,19 +20,10 @@ DynamicPaper is a Microsoft Windows wallpaper app, that supports media formats t
 
 # Supported Media
 * Video Wallpapers
-  * mkv
-  * mp4
-  * mov
-  * avi
-  * wmv
-  * gif
-  * webm
+  * mkv, mp4, mov, avi, wmv, gif, webm
   * ... and many more, thanks to [LibVLC](https://www.videolan.org/vlc/libvlc.html) (VLC Media Player's Core)
 * Image Wallpapers
-  * png
-  * jpeg
-  * bmp
-  * gif
+  * png, jpeg, bmp, gif
 * [ShaderToy](https://www.shadertoy.com/) Shaders
   * `dpst` files from the `stpack` [wiki page](https://github.com/Maxstupo/DynamicPaper/wiki/shadertoy)
 
@@ -43,7 +34,7 @@ DynamicPaper is a Microsoft Windows wallpaper app, that supports media formats t
 #### Development Builds
 The latest development build of DynamicPaper is provided by AppVeyor. View the latest build status [here](https://ci.appveyor.com/project/Maxstupo/DynamicPaper).
 <br/>
-#### Latest build downloads:
+Latest dev builds:
 - [Zipped Build - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Debug)
 - [Zipped Build - Release](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Release)
 - [Installer - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper-Setup.exe?branch=develop&job=Configuration%3A+Debug)
