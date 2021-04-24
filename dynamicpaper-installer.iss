@@ -62,6 +62,7 @@ Source: "DynamicPaper\bin\{#Configuration}\DynamicPaper.exe"; DestDir: "{app}"; 
 Source: "DynamicPaper\bin\{#Configuration}\libvlc\*"; DestDir: "{app}\libvlc"; Flags: recursesubdirs createallsubdirs
 Source: "DynamicPaper\bin\{#Configuration}\*.dll"; DestDir: "{app}"; 
 Source: "DynamicPaper\bin\{#Configuration}\NLog.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "ShaderToyPacker\bin\{#Configuration}\stpack.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
