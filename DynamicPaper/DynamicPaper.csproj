@@ -49,6 +49,8 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,6 +81,18 @@
     <Compile Include="Controls\VolumeSlider.Designer.cs">
       <DependentUpon>VolumeSlider.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogSetDuration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogSetDuration.Designer.cs">
+      <DependentUpon>DialogSetDuration.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,12 +108,29 @@
     <Compile Include="Forms\TrayAwareForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Graphics\Data\ElementBuffer.cs" />
+    <Compile Include="Graphics\Data\VertexArray.cs" />
+    <Compile Include="Graphics\Data\VertexBuffer.cs" />
+    <Compile Include="Graphics\Data\VertexBufferLayout.cs" />
+    <Compile Include="Graphics\FrameBuffer.cs" />
+    <Compile Include="Graphics\IBindable.cs" />
+    <Compile Include="Graphics\Shader.cs" />
+    <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppSettings.cs" />
+    <Compile Include="ShaderToy\IResourceProvider.cs" />
+    <Compile Include="ShaderToy\RenderTarget.cs" />
+    <Compile Include="ShaderToy\Renderer.cs" />
+    <Compile Include="ShaderToy\RenderInput.cs" />
+    <Compile Include="ShaderToy\RenderOutput.cs" />
+    <Compile Include="ShaderToy\RenderPass.cs" />
+    <Compile Include="ShaderToy\RenderData.cs" />
+    <Compile Include="Utility\Extensions.cs" />
     <Compile Include="Utility\SettingsManager.cs" />
     <Compile Include="Utility\FileFilterBuilder.cs" />
     <Compile Include="Utility\ScreenInfo.cs" />
+    <Compile Include="Utility\TimeUtils.cs" />
     <Compile Include="Utility\Windows\DataStructures.cs" />
     <Compile Include="Utility\Windows\NativeMethods.cs" />
     <Compile Include="Utility\Windows\ScreenExtensions.cs" />
@@ -108,14 +139,25 @@
     <Compile Include="Utility\Windows\SPIF.cs" />
     <Compile Include="Utility\Windows\WindowsUtility.cs" />
     <Compile Include="Utility\Windows\WindowsWallpaper.cs" />
-    <Compile Include="Wallpaper\Players\IPlaylistPlayer.cs" />
+    <Compile Include="Wallpaper\Players\AttachablePlayer.cs" />
+    <Compile Include="Wallpaper\Players\IMediaItem.cs" />
+    <Compile Include="Wallpaper\Players\Impl\ShaderToyPlayer.cs" />
+    <Compile Include="Wallpaper\Players\OpenGLPlayer.cs" />
+    <Compile Include="Wallpaper\Players\Impl\PictureBoxPlayer.cs" />
+    <Compile Include="Wallpaper\Players\MultiMediaPlayer.cs" />
+    <Compile Include="Wallpaper\Players\Impl\VlcMediaPlayer.cs" />
+    <Compile Include="Wallpaper\Players\IPlayer.cs" />
     <Compile Include="Wallpaper\MediaPlayerStore.cs" />
     <Compile Include="Wallpaper\Playlist.cs" />
     <Compile Include="Wallpaper\PlaylistItem.cs" />
-    <Compile Include="Wallpaper\Players\VlcMediaPlayer.cs" />
-    <Compile Include="Wallpaper\Players\PlaylistPlayer.cs" />
     <EmbeddedResource Include="Controls\TimelineSlider.resx">
       <DependentUpon>TimelineSlider.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogSetDuration.resx">
+      <DependentUpon>DialogSetDuration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>

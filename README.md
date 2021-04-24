@@ -12,40 +12,40 @@ DynamicPaper is a Microsoft Windows wallpaper app, that supports media formats t
 
 ## Features
 * Multi-Monitor Support
-* Video Wallpapers
+* Video Wallpapers - with per video volume.
 * Image Wallpapers
 * [ShaderToy](https://www.shadertoy.com/) Wallpapers
+* Playlists - Shuffle, Repeat, and Loop
 
-  
+
 # Supported Media
 * Video Wallpapers
-  * mkv
-  * mp4
-  * mov
-  * avi
-  * wmv
-  * gif
-  * webm
+  * mkv, mp4, mov, avi, wmv, gif, webm
   * ... and many more, thanks to [LibVLC](https://www.videolan.org/vlc/libvlc.html) (VLC Media Player's Core)
 * Image Wallpapers
-  * png
-  * jpeg
-  * bmp
-  * gif
-* [ShaderToy](https://www.shadertoy.com/) GLSL Shaders
-  * TBD
+  * png, jpeg, bmp, gif
+* [ShaderToy](https://www.shadertoy.com/) Shaders
+  * `dpst` files from the `stpack` [wiki page](https://github.com/Maxstupo/DynamicPaper/wiki/shadertoy)
 
 ## Releases
-You can find both the latest and previous releases of DynamicPaper on the [releases page](https://github.com/Maxstupo/DynamicPaper/releases).
+
+**Stable releases of DynamicPaper are on the [releases page](https://github.com/Maxstupo/DynamicPaper/releases).**
 
 #### Development Builds
-The latest development build of YDL-UI can be found on the [artifacts](https://ci.appveyor.com/project/Maxstupo/DynamicPaper/build/artifacts) page of DynamicPaper's AppVeyor.
+The latest development build of DynamicPaper is provided by AppVeyor. View the latest build status [here](https://ci.appveyor.com/project/Maxstupo/DynamicPaper).
+<br/>
+Latest dev builds:
+- [Zipped Build - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Debug)
+- [Zipped Build - Release](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper.zip?branch=develop&job=Configuration%3A+Release)
+- [Installer - Debug](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper-Setup.exe?branch=develop&job=Configuration%3A+Debug)
+- [Installer - Release](https://ci.appveyor.com/api/projects/Maxstupo/DynamicPaper/artifacts/DynamicPaper-Setup.exe?branch=develop&job=Configuration%3A+Release)
+
 Note: These builds are temporary and may be unstable as they are built from the [development branch](https://github.com/Maxstupo/DynamicPaper/tree/develop) for every commit automatically.
 
 ## Installation & Setup
 Requires Microsoft Windows 8 or above.
 
-Install using the `DynamicPaper-Setup.exe` from the downloaded [release](https://github.com/Maxstupo/DynamicPaper/releases), and follow the prompts.
+Install using the `DynamicPaper-Setup.exe` from the downloaded [release](https://github.com/Maxstupo/DynamicPaper/releases/latest), and follow the prompts.
 
 TBD
 
@@ -64,3 +64,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 * [OpenTK](https://github.com/opentk/opentk)
 * [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
 * [MimeTypesMap](https://github.com/hey-red/MimeTypesMap)
+* [Fody](https://github.com/Fody/Fody/) & [Fody.Costura](https://github.com/Fody/Costura)
+

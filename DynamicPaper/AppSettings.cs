@@ -1,4 +1,5 @@
 ﻿namespace Maxstupo.DynamicPaper {
+    using System;
     using System.Collections.Generic;
     using Maxstupo.DynamicPaper.Utility;
     using Maxstupo.DynamicPaper.Wallpaper;
@@ -39,12 +40,13 @@
         [JsonProperty("show_time_remaining")]
         public bool ShowTimeLeft { get; set; }
 
-        [JsonProperty("playlists")]
+        [JsonProperty("default_media_duration")]
+        public TimeSpan DefaultMediaDuration { get; set; } = TimeSpan.FromSeconds(5);
+
+        [JsonProperty("monitor_playlists")]
         public Dictionary<int, Playlist> Playlists { get; } = new Dictionary<int, Playlist>();
 
 
     }
-
-
 
 }

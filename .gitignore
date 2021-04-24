@@ -3,7 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-ShaderToyPack/
+DynamicPaper-Setup*.exe
 
 # User-specific files
 *.rsuser

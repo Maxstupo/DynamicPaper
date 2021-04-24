@@ -36,6 +36,10 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cbxMonitor = new System.Windows.Forms.ComboBox();
             this.lbxPlaylist = new Maxstupo.DynamicPaper.Controls.HighlightListbox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -65,10 +69,13 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.setDurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.savePlaylistToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearPlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playlistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -127,9 +134,41 @@ namespace Maxstupo.DynamicPaper.Forms {
             // 
             // helpToolStripMenuItem
             // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem,
+            this.supportToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.checkForUpdatesToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "&Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.aboutToolStripMenuItem.Text = "About DynamicPaper";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // supportToolStripMenuItem
+            // 
+            this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
+            this.supportToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.supportToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.supportToolStripMenuItem.Text = "Support";
+            this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(184, 6);
+            // 
+            // checkForUpdatesToolStripMenuItem
+            // 
+            this.checkForUpdatesToolStripMenuItem.Enabled = false;
+            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             // 
             // cbxMonitor
             // 
@@ -197,6 +236,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.volumeSlider.Size = new System.Drawing.Size(96, 23);
             this.volumeSlider.TabIndex = 5;
             this.volumeSlider.Volume = 1F;
+            this.volumeSlider.VolumeChanged += new System.EventHandler<float>(this.volumeSlider_VolumeChanged);
             // 
             // timelineSlider
             // 
@@ -210,6 +250,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.timelineSlider.Size = new System.Drawing.Size(492, 23);
             this.timelineSlider.TabIndex = 4;
             this.timelineSlider.Time = 1F;
+            this.timelineSlider.TimeChanged += new System.EventHandler<float>(this.timelineSlider_TimeChanged);
             // 
             // btnStop
             // 
@@ -243,6 +284,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.btnShuffle.TabIndex = 1;
             this.btnShuffle.Text = "No Shuffle";
             this.btnShuffle.UseVisualStyleBackColor = true;
+            this.btnShuffle.Value = Maxstupo.DynamicPaper.Wallpaper.Players.ShuffleMode.None;
             this.btnShuffle.Click += new System.EventHandler(this.btnShuffle_Click);
             // 
             // btnLoop
@@ -251,8 +293,9 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.btnLoop.Name = "btnLoop";
             this.btnLoop.Size = new System.Drawing.Size(84, 23);
             this.btnLoop.TabIndex = 0;
-            this.btnLoop.Text = "No Loop";
+            this.btnLoop.Text = "Loop None";
             this.btnLoop.UseVisualStyleBackColor = true;
+            this.btnLoop.Value = Maxstupo.DynamicPaper.Wallpaper.Players.LoopMode.None;
             this.btnLoop.Click += new System.EventHandler(this.btnLoop_Click);
             // 
             // statusStrip
@@ -304,6 +347,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.playlistToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -369,12 +413,14 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.addFileToolStripMenuItem,
             this.addFolderToolStripMenuItem,
             this.toolStripSeparator5,
+            this.setDurationToolStripMenuItem,
+            this.toolStripSeparator8,
             this.savePlaylistToFileToolStripMenuItem,
             this.toolStripSeparator6,
             this.removeToolStripMenuItem,
             this.clearPlaylistToolStripMenuItem});
             this.cmsPlaylist.Name = "cmsPlaylist";
-            this.cmsPlaylist.Size = new System.Drawing.Size(183, 176);
+            this.cmsPlaylist.Size = new System.Drawing.Size(183, 204);
             this.cmsPlaylist.Opening += new System.ComponentModel.CancelEventHandler(this.cmsPlaylist_Opening);
             // 
             // playToolStripMenuItem
@@ -415,12 +461,24 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(179, 6);
             // 
+            // setDurationToolStripMenuItem
+            // 
+            this.setDurationToolStripMenuItem.Name = "setDurationToolStripMenuItem";
+            this.setDurationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.setDurationToolStripMenuItem.Text = "Set Duration...";
+            this.setDurationToolStripMenuItem.Click += new System.EventHandler(this.setDurationToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(179, 6);
+            // 
             // savePlaylistToFileToolStripMenuItem
             // 
-            this.savePlaylistToFileToolStripMenuItem.Enabled = false;
             this.savePlaylistToFileToolStripMenuItem.Name = "savePlaylistToFileToolStripMenuItem";
             this.savePlaylistToFileToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.savePlaylistToFileToolStripMenuItem.Text = "Save Playlist to File...";
+            this.savePlaylistToFileToolStripMenuItem.Click += new System.EventHandler(this.savePlaylistToFileToolStripMenuItem_Click);
             // 
             // toolStripSeparator6
             // 
@@ -440,6 +498,12 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.clearPlaylistToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.clearPlaylistToolStripMenuItem.Text = "Clear the playlist";
             this.clearPlaylistToolStripMenuItem.Click += new System.EventHandler(this.clearPlaylistToolStripMenuItem_Click);
+            // 
+            // playlistToolStripMenuItem
+            // 
+            this.playlistToolStripMenuItem.Name = "playlistToolStripMenuItem";
+            this.playlistToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
+            this.playlistToolStripMenuItem.Text = "Playlist";
             // 
             // FormMain
             // 
@@ -516,6 +580,13 @@ namespace Maxstupo.DynamicPaper.Forms {
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearPlaylistToolStripMenuItem;
+        private ToolStripMenuItem aboutToolStripMenuItem;
+        private ToolStripMenuItem supportToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator7;
+        private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+        private ToolStripMenuItem setDurationToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator8;
+        private ToolStripMenuItem playlistToolStripMenuItem;
     }
 }
 

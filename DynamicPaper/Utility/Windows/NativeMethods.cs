@@ -64,7 +64,10 @@
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
      
-        
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern Int32 SystemParametersInfo(SPI uiAction, UInt32 uiParam, String pvParam, SPIF fWinIni);
 
