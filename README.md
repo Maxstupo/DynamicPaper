@@ -12,11 +12,12 @@ DynamicPaper is a Microsoft Windows wallpaper app, that supports media formats t
 
 ## Features
 * Multi-Monitor Support
-* Video Wallpapers
+* Video Wallpapers - with per video volume.
 * Image Wallpapers
 * [ShaderToy](https://www.shadertoy.com/) Wallpapers
+* Playlists - Shuffle, Repeat, and Loop
 
-  
+
 # Supported Media
 * Video Wallpapers
   * mkv
@@ -32,8 +33,8 @@ DynamicPaper is a Microsoft Windows wallpaper app, that supports media formats t
   * jpeg
   * bmp
   * gif
-* [ShaderToy](https://www.shadertoy.com/) GLSL Shaders
-  * TBD
+* [ShaderToy](https://www.shadertoy.com/) Shaders
+  * `dpst` files from the `stpack` [wiki page](https://github.com/Maxstupo/DynamicPaper/wiki/shadertoy)
 
 ## Releases
 
@@ -53,7 +54,7 @@ Note: These builds are temporary and may be unstable as they are built from the 
 ## Installation & Setup
 Requires Microsoft Windows 8 or above.
 
-Install using the `DynamicPaper-Setup.exe` from the downloaded [release](https://github.com/Maxstupo/DynamicPaper/releases), and follow the prompts.
+Install using the `DynamicPaper-Setup.exe` from the downloaded [release](https://github.com/Maxstupo/DynamicPaper/releases/latest), and follow the prompts.
 
 TBD
 
@@ -72,3 +73,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 * [OpenTK](https://github.com/opentk/opentk)
 * [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
 * [MimeTypesMap](https://github.com/hey-red/MimeTypesMap)
+* [Fody](https://github.com/Fody/Fody/) & [Fody.Costura](https://github.com/Fody/Costura)
+
