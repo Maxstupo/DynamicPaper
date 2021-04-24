@@ -42,7 +42,7 @@ for:
   configuration: Release
 
   deploy:
-    artifact: /*\.exe/
+    artifact: /.*\.exe/
     auth_token:
       secure: FvYSkn+t71h71KQJ3v63HzNcxv7Hv9rpqQiQ/Zdly9h87M3VmB2WexbixZg1EDIq
     draft: true
