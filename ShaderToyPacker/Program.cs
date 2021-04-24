@@ -87,6 +87,11 @@
                     string description = renderPass["description"].Value<string>();
                     string type = renderPass["type"].Value<string>();
 
+                    if (!(type == "buffer" || type == "common" || type == "image")) {
+                        Logger.Warn("  - Unknown pass type '{0}' for render pass '{1}'", type, name);
+                        continue;
+                    }
+
                     // Write GLSL shader file(s)...
                     string renderPassName = string.Empty;
                     if (type == "common") {
@@ -136,24 +141,32 @@
                                 Http.GetFile(srcUrl, assetFilepath);
 
                                 inputs.Add(new JObject {
-                                { "id", inputId },
-                                { "type" , inputType },
-                                { "src", $"assets/{assetFilename}"},
-                                { "channel", inputChannel },
-                                { "sampler", new JObject {
-                                    { "filter", input["sampler"]["filter"].Value<string>() },
-                                    { "wrap", input["sampler"]["wrap"].Value<string>() },
-                                    { "vflip", input["sampler"]["vflip"].Value<bool>() }
+                                    { "id", inputId },
+                                    { "type" , inputType },
+                                    { "src", $"assets/{assetFilename}"},
+                                    { "channel", inputChannel },
+                                    { "sampler", new JObject {
+                                        { "filter", input["sampler"]["filter"].Value<string>() },
+                                        { "wrap", input["sampler"]["wrap"].Value<string>() },
+                                        { "vflip", input["sampler"]["vflip"].Value<bool>() }
                                 } }
                             });
+                            } else if (inputType == "volume") {
+                                //inputs.Add(new JObject {
+                                //    { "id", inputId },
+                                //    { "type" , inputType },
+                                //    { "channel", inputChannel },
+                                //});
+                                Logger.Warn("         - Unknown channel type '{0}' for render pass '{1}'", inputType, name);
+
                             } else {
                                 Logger.Warn("         - Unknown channel type '{0}' for render pass '{1}'", inputType, name);
+
                             }
                         }
 
                         Logger.Debug("     - Processing outputs...");
                         IEnumerable<int> outputs = renderPass["outputs"].Select(x => x["id"].Value<int>());
-
 
                         Logger.Debug("     - Writing configuration file...");
                         string configFilename = $"{renderPassName}.json";
@@ -167,8 +180,8 @@
                             outputs
 
                         }, Formatting.Indented), Encoding.UTF8);
-                    }
 
+                    }
                     index++;
                 }
 
@@ -209,12 +222,10 @@
 
 
         static int Main(string[] args) {
-
             return Parser.Default.ParseArguments<Options>(args).MapResult(
                 options => Run(options),
                 _ => -1
             );
-
         }
 
         private static int Run(Options options) {
