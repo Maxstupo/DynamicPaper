@@ -11,6 +11,9 @@
     using Maxstupo.ShaderToyPack;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using NLog;
+    using NLog.Config;
+    using NLog.Targets;
 
     public static class Program {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("Packer");
@@ -222,6 +225,13 @@
 
 
         static int Main(string[] args) {
+            // Setup NLog
+            LoggingConfiguration config = new LoggingConfiguration();
+            ConsoleTarget logconsole = new ConsoleTarget("logconsole");
+
+            config.AddRule(LogLevel.Trace, LogLevel.Fatal, logconsole);
+            LogManager.Configuration = config;
+
             return Parser.Default.ParseArguments<Options>(args).MapResult(
                 options => Run(options),
                 _ => -1
