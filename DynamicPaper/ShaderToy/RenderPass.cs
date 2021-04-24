@@ -40,8 +40,8 @@
             return this;
         }
 
-        public RenderPassBuilder AddTextureInput(int channel,string name, byte[] textureData) {
-            inputs.Add(new RenderInput(channel,name, textureData));
+        public RenderPassBuilder AddTextureInput(int channel, string name, byte[] textureData) {
+            inputs.Add(new RenderInput(channel, name, textureData));
             return this;
         }
 
@@ -130,7 +130,7 @@
         }
 
         public void Init(IResourceProvider provider, string commonFragmentCode = null) {
-            Logger.Debug("Initializing...");
+            Logger.Debug("Initializing: {0}", Name);
 
             StringBuilder sb = new StringBuilder();
 
