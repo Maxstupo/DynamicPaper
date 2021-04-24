@@ -59,6 +59,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "DynamicPaper\bin\{#Configuration}\DynamicPaper.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "DynamicPaper\bin\{#Configuration}\DynamicPaper.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "DynamicPaper\bin\{#Configuration}\libvlc\*"; DestDir: "{app}\libvlc"; Flags: recursesubdirs createallsubdirs
 Source: "DynamicPaper\bin\{#Configuration}\*.dll"; DestDir: "{app}"; 
 Source: "DynamicPaper\bin\{#Configuration}\NLog.config"; DestDir: "{app}"; Flags: ignoreversion
