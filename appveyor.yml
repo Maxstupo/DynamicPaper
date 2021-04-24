@@ -37,6 +37,7 @@ for:
   branches:
     only:
       - master
+      - /v\d+\.\d+\.\d+/
 
   configuration: Release
 
