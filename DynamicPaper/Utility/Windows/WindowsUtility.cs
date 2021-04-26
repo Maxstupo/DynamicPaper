@@ -5,6 +5,7 @@
     using Microsoft.Win32;
 
     public static class WindowsUtility {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static bool StartApplicationWithWindows(string applicationId, bool enabled) {
             try {
@@ -17,7 +18,7 @@
                 }
                 return true;
             } catch (Exception e) {
-                Console.Error.WriteLine(e);
+                Logger.Error("Failed setting the start with windows registry key 'HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\{0}'", applicationId, e);
                 return false;
             }
         }
