@@ -2,7 +2,6 @@
 <p float="left" align="left" width="100%">
  <img src="https://img.shields.io/github/license/Maxstupo/DynamicPaper.svg" />
  <img src="https://img.shields.io/github/release/Maxstupo/DynamicPaper.svg" />
- <img src="https://img.shields.io/github/downloads/Maxstupo/DynamicPaper/total.svg" />
  <a href="https://ci.appveyor.com/project/Maxstupo/DynamicPaper">
     <img src="https://ci.appveyor.com/api/projects/status/l70py6w3qu9tmwm7?svg=true" />
  </a>

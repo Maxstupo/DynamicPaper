@@ -8,9 +8,9 @@
     #define Configuration "Release"
 #endif
 
-;/DApplicationVersion=1.0.0.0
+;/DApplicationVersion=1.0.0
 #ifndef ApplicationVersion
-    #define ApplicationVersion GetVersionNumbersString("DynamicPaper\bin\" + Configuration + "\DynamicPaper.exe")
+    #define ApplicationVersion RemoveFileExt(GetVersionNumbersString("DynamicPaper\bin\" + Configuration + "\DynamicPaper.exe"))
 #endif
 
 #define MyAppPublisher "Maxstupo"
@@ -24,6 +24,7 @@ AppId={{5D418F6D-FDA4-42BF-B3B7-A676C7F6A28E}
 AppName={#MyAppName}
 AppVersion={#ApplicationVersion}
 ;AppVerName={#MyAppName} {#ApplicationVersion}
+UninstallDisplayName={#MyAppName}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
