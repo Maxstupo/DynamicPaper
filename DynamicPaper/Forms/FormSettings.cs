@@ -41,7 +41,8 @@
         }
 
         private void btnOkay_Click(object sender, EventArgs e) {
-            WindowsUtility.StartApplicationWithWindows(Application.ProductName, settingsManager.Settings.StartWithWindows);
+            if (!WindowsUtility.StartApplicationWithWindows(Application.ProductName, settingsManager.Settings.StartWithWindows))
+                settingsManager.Settings.StartWithWindows = false;
 
             settingsManager.Save();
             DialogResult = DialogResult.OK;
