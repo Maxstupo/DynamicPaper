@@ -517,6 +517,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.Controls.Add(this.lbxPlaylist);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(385, 254);
             this.Name = "FormMain";
@@ -526,6 +527,7 @@ namespace Maxstupo.DynamicPaper.Forms {
             this.OnTrayEntered += new System.EventHandler(this.FormMain_OnTrayEntered);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.groupBox1.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
