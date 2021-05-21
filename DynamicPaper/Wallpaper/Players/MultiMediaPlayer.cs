@@ -174,6 +174,18 @@
             }, state);
         }
 
+        public void PlayNext() {
+            int index = Playlist.CurrentIndex;
+            if (index < Playlist.Count - 1)
+                Play(Playlist.Items[index + 1]);
+        }
+
+        public void PlayPrevious() {
+            int index = Playlist.CurrentIndex;
+            if (index > 0)
+                Play(Playlist.Items[index - 1]);
+        }
+
         private void InternalPlayer_OnPositionChanged(object sender, float pos) {
             context.Post(position => OnPositionChanged?.Invoke(null, (float) position), pos);
         }

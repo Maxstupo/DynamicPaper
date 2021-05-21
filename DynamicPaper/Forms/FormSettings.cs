@@ -2,6 +2,7 @@
     using System;
     using System.Windows.Forms;
     using Maxstupo.DynamicPaper.Utility;
+    using Maxstupo.DynamicPaper.Utility.Windows;
 
     public partial class FormSettings : Form {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -39,7 +40,10 @@
             bindingSource.ResetBindings(false);
         }
 
-        private void btnOkay_Click(object sender, System.EventArgs e) {
+        private void btnOkay_Click(object sender, EventArgs e) {
+            if (!WindowsUtility.StartApplicationWithWindows(Application.ProductName, settingsManager.Settings.StartWithWindows))
+                settingsManager.Settings.StartWithWindows = false;
+
             settingsManager.Save();
             DialogResult = DialogResult.OK;
         }

@@ -8,9 +8,9 @@
     #define Configuration "Release"
 #endif
 
-;/DApplicationVersion=1.0.0.0
+;/DApplicationVersion=1.0.0
 #ifndef ApplicationVersion
-    #define ApplicationVersion GetVersionNumbersString("DynamicPaper\bin\" + Configuration + "\DynamicPaper.exe")
+    #define ApplicationVersion RemoveFileExt(GetVersionNumbersString("DynamicPaper\bin\" + Configuration + "\DynamicPaper.exe"))
 #endif
 
 #define MyAppPublisher "Maxstupo"
@@ -24,6 +24,7 @@ AppId={{5D418F6D-FDA4-42BF-B3B7-A676C7F6A28E}
 AppName={#MyAppName}
 AppVersion={#ApplicationVersion}
 ;AppVerName={#MyAppName} {#ApplicationVersion}
+UninstallDisplayName={#MyAppName}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -59,6 +60,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "DynamicPaper\bin\{#Configuration}\DynamicPaper.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "DynamicPaper\bin\{#Configuration}\DynamicPaper.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "DynamicPaper\bin\{#Configuration}\libvlc\*"; DestDir: "{app}\libvlc"; Flags: recursesubdirs createallsubdirs
 Source: "DynamicPaper\bin\{#Configuration}\*.dll"; DestDir: "{app}"; 
 Source: "DynamicPaper\bin\{#Configuration}\NLog.config"; DestDir: "{app}"; Flags: ignoreversion

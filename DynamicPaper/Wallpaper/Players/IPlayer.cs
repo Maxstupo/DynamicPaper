@@ -65,6 +65,10 @@
 
 
         void Play(IPlaylistItem item = null);
+        
+        void PlayNext();
+
+        void PlayPrevious();
 
     }
 

@@ -623,6 +623,43 @@
 
                 }
             }
+        }
+
+        private void FormMain_KeyDown(object sender, KeyEventArgs e) {
+
+            switch (e.KeyCode) {
+                case Keys.Space:
+                    btnPlayPause.PerformClick();
+                    e.Handled = true;
+                    break;
+                case Keys.Escape:
+                    btnStop.PerformClick();
+                    e.Handled = true;
+                    break;
+                case Keys.Left:
+                    CurrentPlayer?.PlayPrevious();
+                    e.Handled = true;
+                    break;
+                case Keys.Right:
+                    CurrentPlayer?.PlayNext();
+                    e.Handled = true;
+                    break;
+                default:
+                    break;
+            }
+
+            int keyCode = e.KeyValue;
+            if (keyCode >= (int) Keys.D0 && keyCode <= (int) Keys.D9) {
+                int index = 8 - ((int) Keys.D9 - keyCode);
+                if (index == -1) // Keys.D0
+                    index = 9;
+
+
+                if (index < cbxMonitor.Items.Count) {
+
+                }
+                e.Handled = true;
+            }
 
         }
 
