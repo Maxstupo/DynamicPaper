@@ -51,7 +51,7 @@ for:
       appveyor_repo_tag: true
 
   artifacts:
-  - path: 'DynamicPaper-Setup_v$(APPVEYOR_BUILD_VERSION).exe'
+  - path: 'DynamicPaper-Setup_v*.exe'
     name: $(CONFIGURATION)-Setup_Build
   - path: 'stpack.exe'
     name: stpack-$(CONFIGURATION)_Build
